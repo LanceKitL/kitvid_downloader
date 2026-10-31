@@ -117,16 +117,28 @@
           <h3 id="speed-h" class="section-title">Download speed</h3>
           <span id="aria2-status" class="badge hidden"></span>
         </div>
-        <div class="speed-row">
-          <label for="speed-profile">Speed profile</label>
-          <select id="speed-profile"></select>
-        </div>
+        <label class="switch" for="gentle-toggle">
+          <input id="gentle-toggle" type="checkbox" role="switch" />
+          <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          <span class="switch-text">
+            <strong>Keep my internet usable</strong>
+            <span class="muted">Downloads use less bandwidth so calls and browsing stay smooth.</span>
+          </span>
+        </label>
         <p id="speed-msg" class="hint" aria-live="polite"></p>
+        <details class="advanced">
+          <summary>Advanced</summary>
+          <div class="speed-row">
+            <label for="speed-profile">Speed profile</label>
+            <select id="speed-profile"></select>
+          </div>
+        </details>
       </section>
     </main>
 
     <footer class="page-footer">
       <span>KitVid runs locally with yt-dlp and FFmpeg. Personal use only.</span>
+      <span class="credit">Made by <a href="https://lancekit.me" target="_blank" rel="noopener noreferrer">lancekit.me</a></span>
     </footer>
 
     <script src="/static/app.js"></script>

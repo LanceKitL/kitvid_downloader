@@ -289,6 +289,45 @@ button.is-busy .spinner { display: inline-block; animation: spin 700ms linear in
 .path-row button { flex: 0 0 auto; }
 .speed-row { display: grid; gap: 6px; max-width: 480px; }
 
+/* ─── Switch (gel toggle) ───────────────────────────────────── */
+.switch { display: flex; align-items: center; gap: 14px; margin: 0; cursor: pointer; color: var(--ink); font-size: var(--fs-body); font-weight: 400; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch-track {
+  position: relative; flex: 0 0 auto; width: 48px; height: 26px; border-radius: 999px;
+  background: linear-gradient(#cfd9ea, #eef2f9); border: 1px solid var(--edge-dk);
+  box-shadow: var(--bevel-in);
+  transition: background-color var(--t-base) var(--ease-out), border-color var(--t-base) var(--ease-out);
+}
+.switch-track::before {
+  content: ""; position: absolute; inset: 1px; border-radius: inherit; opacity: 0;
+  background: var(--gloss), linear-gradient(to bottom, #6fd0ff, #1e7bff 55%, #0f5fe0);
+  transition: opacity var(--t-base) var(--ease-out);
+}
+.switch-thumb {
+  position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--gloss), radial-gradient(circle at 50% 120%, #dfe7f4, #fff 70%);
+  box-shadow: 0 0 0 1px var(--edge-dk), 0 2px 3px rgba(20,33,61,0.35), inset 0 -2px 2px rgba(255,255,255,0.6);
+  transition: transform var(--t-base) var(--ease-out);
+}
+.switch input:checked + .switch-track { border-color: var(--blue-dk); }
+.switch input:checked + .switch-track::before { opacity: 1; }
+.switch input:checked + .switch-track .switch-thumb { transform: translateX(22px); }
+.switch input:focus-visible + .switch-track { box-shadow: var(--bevel-in), var(--shadow-focus); }
+.switch input:disabled + .switch-track { opacity: 0.5; }
+.switch-text { display: grid; gap: 1px; }
+.switch-text strong { font-weight: 700; }
+
+/* ─── Advanced disclosure ───────────────────────────────────── */
+.advanced { margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(106,128,166,0.45); }
+.advanced summary {
+  cursor: pointer; font-size: var(--fs-small); font-weight: 700; color: var(--muted);
+  list-style: none; display: inline-flex; align-items: center; gap: 6px; user-select: none;
+}
+.advanced summary::-webkit-details-marker { display: none; }
+.advanced summary::before { content: "▸"; display: inline-block; transition: transform var(--t-fast) var(--ease-out); }
+.advanced[open] summary::before { transform: rotate(90deg); }
+.advanced .speed-row { margin-top: 12px; }
+
 /* ─── Badges ────────────────────────────────────────────────── */
 .badge {
   font-size: var(--fs-small); font-weight: 700; padding: 2px 10px; border-radius: 999px;
@@ -444,6 +483,17 @@ button.is-busy .spinner { display: inline-block; animation: spin 700ms linear in
 .page-footer::before { content: "✦ "; color: var(--pink); }
 .page-footer::after  { content: " ✦"; color: var(--pink); }
 
+.page-footer { display: grid; gap: 4px; justify-items: center; }
+.page-footer::before, .page-footer::after { content: none; }
+.credit::before { content: "✦ "; color: var(--pink); }
+.credit::after  { content: " ✦"; color: var(--pink); }
+.credit a {
+  color: var(--blue-dk); font-weight: 700; text-decoration: none;
+  border-bottom: 1px solid rgba(11,87,184,0.35);
+  transition: color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+}
+@media (hover: hover) { .credit a:hover { color: var(--pink); border-color: var(--pink); } }
+
 /* ─── Phone ─────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .topbar-inner { padding: 0 14px; }
@@ -477,6 +527,7 @@ button.is-busy .spinner { display: inline-block; animation: spin 700ms linear in
   .job-item.celebrate .pill.finished,
   .job-item.celebrate .pill.finished::before,
   .job-item.celebrate .progress-bar { animation: none; }
+  .switch-thumb, .switch-track, .switch-track::before, .advanced summary::before { transition: none; }
   button.is-busy .spinner { animation: none; border-top-color: rgba(255,255,255,0.4); }
   button.is-busy .btn-label { opacity: 0.8; }
 }

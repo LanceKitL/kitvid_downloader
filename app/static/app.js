@@ -209,16 +209,61 @@ function speedProfile(settings) {
   return profiles.find((profile) => profile.id === settings?.speed_profile) || null;
 }
 
-function showSpeedHint(settings, prefix) {
+// Map the friendly toggle onto the backend's profiles.
+// "Full speed" is the app default; "gentle" prefers a medium/balanced profile.
+function fullSpeedId(settings) {
+  const ids = (settings?.speed_profiles || []).map((p) => p.id);
+  return ids.includes("fast") ? "fast" : ids[0] || "fast";
+}
+
+function gentleId(settings) {
+  const profiles = settings?.speed_profiles || [];
+  const named = profiles.find((p) => /^(medium|balanced|gentle|low|normal)$/i.test(p.id));
+  if (named) return named.id;
+  const full = fullSpeedId(settings);
+  const other = profiles.find((p) => p.id !== full && !/^max/i.test(p.id));
+  return other ? other.id : null;
+}
+
+function syncSpeedUi(settings, prefix) {
   const profile = speedProfile(settings);
-  if (!profile) {
-    setMessage($("speed-msg"), "", null);
-    return;
+  const toggle = $("gentle-toggle");
+  const gentle = gentleId(settings);
+  toggle.checked = !!gentle && settings.speed_profile === gentle;
+  toggle.disabled = !gentle;
+  $("speed-profile").value = settings.speed_profile;
+
+  let text = "";
+  if (toggle.checked) {
+    text = "Gentle mode is on. Downloads run a bit slower so your connection stays usable.";
+  } else if (profile && settings.speed_profile === fullSpeedId(settings)) {
+    text = "Full speed. KitVid uses everything your connection offers.";
+  } else if (profile) {
+    text = `${profile.label}: ${profile.description}`;
   }
-  const text = prefix
-    ? `${prefix} ${profile.label} mode is active. ${profile.description}`
-    : `${profile.label}: ${profile.description}`;
-  setMessage($("speed-msg"), text, prefix ? "ok" : null);
+  setMessage($("speed-msg"), prefix && text ? `${prefix} ${text}` : text, prefix ? "ok" : null);
+}
+
+async function saveSpeed(profileId) {
+  const select = $("speed-profile");
+  const toggle = $("gentle-toggle");
+  select.disabled = true;
+  toggle.disabled = true;
+  try {
+    const current = await api("/api/settings/speed", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profile: profileId }),
+    });
+    state.settings = current;
+    syncSpeedUi(current, "Saved.");
+  } catch (error) {
+    if (state.settings) syncSpeedUi(state.settings);
+    setMessage($("speed-msg"), error.message, "bad");
+  } finally {
+    select.disabled = false;
+    toggle.disabled = !gentleId(state.settings);
+  }
 }
 
 async function loadSettings() {
@@ -237,7 +282,7 @@ async function loadSettings() {
       profileSelect.appendChild(option);
     }
     profileSelect.value = current.speed_profile || "fast";
-    showSpeedHint(current);
+    syncSpeedUi(current);
     const aria2 = $("aria2-status");
     if (current.aria2_available) {
       aria2.textContent = "aria2c ready";
@@ -287,26 +332,12 @@ $("settings-form").addEventListener("submit", async (event) => {
   }
 });
 
-$("speed-profile").addEventListener("change", async () => {
-  const select = $("speed-profile");
-  const profile = select.value;
-  select.disabled = true;
+$("speed-profile").addEventListener("change", () => saveSpeed($("speed-profile").value));
 
-  try {
-    const current = await api("/api/settings/speed", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ profile }),
-    });
-    state.settings = current;
-    select.value = current.speed_profile;
-    showSpeedHint(current, "Saved.");
-  } catch (error) {
-    select.value = state.settings?.speed_profile || "fast";
-    setMessage($("speed-msg"), error.message, "bad");
-  } finally {
-    select.disabled = false;
-  }
+$("gentle-toggle").addEventListener("change", () => {
+  const settings = state.settings;
+  if (!settings) return;
+  saveSpeed($("gentle-toggle").checked ? gentleId(settings) : fullSpeedId(settings));
 });
 
 $("reset-settings").addEventListener("click", () => {
@@ -760,8 +791,11 @@ function renderJobs() {
 
   const active = state.jobs.filter((j) => j.status === "queued" || j.status === "running").length;
   reveal(card);
-  $("downloads-summary").textContent =
-    active > 0 ? `${active} active · ${state.jobs.length} total` : `${state.jobs.length} total`;
+  if (!(state.savedUntil && Date.now() < state.savedUntil)) {
+    $("downloads-summary").textContent =
+      active > 0 ? `${active} active · ${state.jobs.length} total` : `${state.jobs.length} total`;
+  }
+  updateSaveAll();
 
   const existing = new Map();
   container.querySelectorAll(".job-item").forEach((el) => existing.set(el.dataset.jobId, el));
@@ -790,6 +824,50 @@ function renderJobs() {
 
   updateEmptyState();
 }
+
+function savableJobs() {
+  return state.jobs.filter((j) => j.status === "finished" && j.download_url);
+}
+
+function updateSaveAll() {
+  const btn = $("save-all");
+  if (btn.classList.contains("is-busy")) return;
+  const files = savableJobs();
+  const label = btn.querySelector(".btn-label");
+  if (files.length < 1) {
+    btn.classList.add("hidden");
+    return;
+  }
+  const text = files.length === 1 ? "Save file" : `Save all (${files.length})`;
+  if (btn.classList.contains("hidden")) btn.classList.remove("hidden");
+  if (label.textContent !== text) label.textContent = text;
+}
+
+// Trigger each finished file in turn. Browsers may ask once to allow
+// multiple downloads; a short gap keeps them from being dropped.
+$("save-all").addEventListener("click", async () => {
+  const files = savableJobs();
+  if (!files.length) return;
+  clearError();
+  const btn = $("save-all");
+  setBusy(btn, true, `Saving ${files.length}…`);
+  for (const job of files) {
+    const a = document.createElement("a");
+    a.href = job.download_url;
+    a.setAttribute("download", job.filename || "download");
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  setBusy(btn, false);
+  updateSaveAll();
+  const hint = $("downloads-summary");
+  hint.textContent = `Saved ${files.length} file${files.length === 1 ? "" : "s"}`;
+  swap(hint);
+  state.savedUntil = Date.now() + 3000;
+});
 
 async function refreshJobs() {
   if (state.jobsRequest) return;
