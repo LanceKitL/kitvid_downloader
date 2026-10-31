@@ -10,6 +10,7 @@ set "MARK_VENV=%ROOT%.setup_venv.tmp"
 set "FFMPEG_DIR=%ROOT%tools\ffmpeg"
 set "FFMPEG_ZIP=%TEMP%\kitvid-ffmpeg.zip"
 set "PY_INSTALLER=%TEMP%\kitvid-python-installer.exe"
+set "DEPS_STAMP=%ROOT%.venv\.deps_hash"
 set "KV_SELF=%SELF%"
 set "KV_ACTIVE=%MARK_ACTIVE%"
 
@@ -21,11 +22,19 @@ call :cleanup_partial
 
 if not exist "requirements.txt" goto :no_requirements
 
-REM ---------- Step 1: FFmpeg ----------
+REM ======================================================================
+REM  FAST PATH: if everything is already installed, skip setup entirely
+REM ======================================================================
+call :quick_check
+if not errorlevel 1 goto :fast_launch
+
+echo Some components are missing or outdated. Running setup...
+
+REM ---------- Step 1: FFmpeg (only installs if missing) ----------
 call :ensure_ffmpeg
 if errorlevel 1 goto :ffmpeg_error
 
-REM ---------- Step 2: Python ----------
+REM ---------- Step 2: Python (only installs if missing) ----------
 set "PYTHON_EXE="
 call :find_python
 if defined PYTHON_EXE goto :python_ready
@@ -54,7 +63,7 @@ exit /b 1
 :python_ready
 echo Using Python: %PYTHON_EXE%
 
-REM ---------- Step 3: Virtual environment ----------
+REM ---------- Step 3: Virtual environment (only created if missing/broken) ----------
 if not exist ".venv\Scripts\python.exe" goto :make_venv
 ".venv\Scripts\python.exe" -m pip --version >nul 2>&1
 if errorlevel 1 goto :venv_broken
@@ -93,10 +102,20 @@ set "VD_YTDLP=%ROOT%.venv\Scripts\yt-dlp.exe"
 yt-dlp --version >nul 2>&1
 if errorlevel 1 goto :ytdlp_error
 
+REM ---------- Remember that dependencies are installed ----------
+call :get_req_hash
+> "%DEPS_STAMP%" echo %REQ_HASH%
+
 REM ---------- Setup finished: nothing to clean up anymore ----------
 call :finish_markers
+goto :launch
 
-REM ---------- Launch ----------
+:fast_launch
+REM Everything already installed: just set PATH and run.
+set "PATH=%ROOT%.venv\Scripts;%PATH%"
+set "VD_YTDLP=%ROOT%.venv\Scripts\yt-dlp.exe"
+
+:launch
 ".venv\Scripts\python.exe" launcher.py
 if errorlevel 1 pause
 exit /b 0
@@ -157,6 +176,36 @@ exit /b 1
 REM ======================================================================
 REM  Helpers
 REM ======================================================================
+
+REM Returns errorlevel 0 only if FFmpeg, the venv, yt-dlp and all packages
+REM from the current requirements.txt are already in place.
+:quick_check
+REM FFmpeg: system-wide or local copy
+where ffmpeg >nul 2>&1
+if not errorlevel 1 goto :qc_venv
+if not exist "%FFMPEG_DIR%\bin\ffmpeg.exe" exit /b 1
+set "PATH=%FFMPEG_DIR%\bin;%PATH%"
+
+:qc_venv
+if not exist ".venv\Scripts\python.exe" exit /b 1
+if not exist ".venv\Scripts\yt-dlp.exe" exit /b 1
+if not exist "%DEPS_STAMP%" exit /b 1
+".venv\Scripts\python.exe" -c "import sys; sys.exit(0 if (3,11) <= sys.version_info[:2] <= (3,13) else 1)" >nul 2>&1
+if errorlevel 1 exit /b 1
+
+REM requirements.txt must be unchanged since the last successful install
+call :get_req_hash
+set "STORED_HASH="
+set /p STORED_HASH=<"%DEPS_STAMP%"
+if not defined REQ_HASH exit /b 1
+if not "%STORED_HASH%"=="%REQ_HASH%" exit /b 1
+exit /b 0
+
+:get_req_hash
+set "REQ_HASH="
+for /f "skip=1 tokens=* delims=" %%H in ('certutil -hashfile "%ROOT%requirements.txt" SHA256 ^| findstr /v /c:"CertUtil"') do if not defined REQ_HASH set "REQ_HASH=%%H"
+if defined REQ_HASH set "REQ_HASH=%REQ_HASH: =%"
+exit /b 0
 
 :find_python
 for %%V in (3.13 3.12 3.11) do (
