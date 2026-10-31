@@ -6,3 +6,4 @@ downloads/
 settings.json
 .env
 .pytest_cache/
+/tools/*
