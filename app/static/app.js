@@ -16,30 +16,72 @@ const STATUS_LABELS = {
   cancelled: "Cancelled",
 };
 
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const EXIT_MS = 160;
+
 function esc(value) {
   return String(value ?? "").replace(
     /[&<>"']/g,
     (ch) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      })[ch]
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]
   );
 }
 
+/* ─── Motion helpers ────────────────────────────────────────── */
+
+// Re-trigger the soft text-swap animation when a message changes.
+function swap(el) {
+  el.classList.remove("swap");
+  void el.offsetWidth; // restart animation
+  el.classList.add("swap");
+}
+
+// One-shot reveal for panels the first time they appear.
+function reveal(el) {
+  if (!el.classList.contains("hidden")) return;
+  el.classList.remove("hidden");
+  el.classList.remove("reveal");
+  void el.offsetWidth;
+  el.classList.add("reveal");
+}
+
+// Play the exit transition, then run the callback. Instant under reduced motion.
+function leave(el, done) {
+  if (!el) return done();
+  if (reduceMotion.matches) return done();
+  el.classList.add("leaving");
+  setTimeout(done, EXIT_MS);
+}
+
+function setBusy(button, busy, busyText) {
+  const label = button.querySelector(".btn-label") || button;
+  if (busy) {
+    button.dataset.original = label.textContent;
+    button.disabled = true;
+    button.classList.add("is-busy");
+    label.textContent = busyText;
+  } else {
+    button.disabled = false;
+    button.classList.remove("is-busy");
+    if (button.dataset.original !== undefined) label.textContent = button.dataset.original;
+  }
+}
+
+/* ─── Errors ────────────────────────────────────────────────── */
+
 function showError(message) {
+  $("error-text").textContent = message;
   const box = $("error");
-  box.textContent = message;
-  box.classList.remove("hidden");
+  box.classList.add("hidden");
+  reveal(box);
 }
 
 function clearError() {
   $("error").classList.add("hidden");
-  $("error").textContent = "";
+  $("error-text").textContent = "";
 }
+
+$("error-close").addEventListener("click", clearError);
 
 async function api(path, options = {}) {
   const response = await fetch(path, options);
@@ -58,6 +100,8 @@ async function api(path, options = {}) {
   }
   return data;
 }
+
+/* ─── Formatting ────────────────────────────────────────────── */
 
 function formatDuration(seconds) {
   if (!seconds || !Number.isFinite(seconds)) return "";
@@ -89,9 +133,7 @@ function formatSpeed(bytesPerSecond) {
 }
 
 function formatEta(seconds) {
-  if (seconds === null || seconds === undefined || !Number.isFinite(seconds)) {
-    return "";
-  }
+  if (seconds === null || seconds === undefined || !Number.isFinite(seconds)) return "";
   if (seconds < 60) return `${Math.round(seconds)}s left`;
   const minutes = Math.floor(seconds / 60);
   const secs = Math.round(seconds % 60);
@@ -102,9 +144,7 @@ function codecLabel(vcodec) {
   const codec = (vcodec || "").toLowerCase();
   if (!codec || codec === "unknown" || codec === "none") return "";
   if (codec.startsWith("avc") || codec.startsWith("h264")) return "H.264";
-  if (codec.includes("hevc") || codec.startsWith("hev") || codec.startsWith("hvc")) {
-    return "HEVC";
-  }
+  if (codec.includes("hevc") || codec.startsWith("hev") || codec.startsWith("hvc")) return "HEVC";
   if (codec.startsWith("av01") || codec.includes("av1")) return "AV1";
   if (codec.startsWith("vp9") || codec.startsWith("vp09")) return "VP9";
   if (codec.startsWith("vp8")) return "VP8";
@@ -121,15 +161,9 @@ function formatLabel(format) {
   }
   const codec = codecLabel(format.vcodec);
   if (codec) parts.push(codec);
-  if (format.fps && format.fps > 30) {
-    parts.push(`${Math.round(format.fps)}fps`);
-  }
-  if (format.filesize_label) {
-    parts.push(format.filesize_label);
-  }
-  if (format.needs_audio) {
-    parts.push("+ audio");
-  }
+  if (format.fps && format.fps > 30) parts.push(`${Math.round(format.fps)}fps`);
+  if (format.filesize_label) parts.push(format.filesize_label);
+  if (format.needs_audio) parts.push("+ audio");
   return parts.join(" · ");
 }
 
@@ -137,12 +171,7 @@ function dedupeFormats(formats) {
   const seen = new Set();
   const result = [];
   for (const format of formats) {
-    const key = [
-      format.height,
-      format.ext,
-      Math.round(format.fps || 0),
-      format.vcodec,
-    ].join("|");
+    const key = [format.height, format.ext, Math.round(format.fps || 0), format.vcodec].join("|");
     if (seen.has(key)) continue;
     seen.add(key);
     result.push(format);
@@ -151,10 +180,29 @@ function dedupeFormats(formats) {
 }
 
 function setMessage(element, text, kind) {
+  const changed = element.textContent !== text;
   element.textContent = text;
   element.classList.remove("ok", "bad");
   if (kind) element.classList.add(kind);
+  if (changed && text) swap(element);
 }
+
+/* ─── Empty state ───────────────────────────────────────────── */
+
+function updateEmptyState() {
+  const empty = $("empty-state");
+  const isEmpty = !state.queue.length && !state.jobs.length;
+  if (isEmpty && empty.classList.contains("hidden")) {
+    empty.classList.remove("hidden");
+    empty.classList.remove("reveal");
+    void empty.offsetWidth;
+    empty.classList.add("reveal");
+  } else if (!isEmpty) {
+    empty.classList.add("hidden");
+  }
+}
+
+/* ─── Settings ──────────────────────────────────────────────── */
 
 function speedProfile(settings) {
   const profiles = settings?.speed_profiles || [];
@@ -180,7 +228,6 @@ async function loadSettings() {
     $("download-dir").value = current.download_dir;
     $("settings-path").textContent = current.download_dir;
 
-    // Populate speed profile <select> from backend data.
     const profileSelect = $("speed-profile");
     profileSelect.innerHTML = "";
     for (const profile of current.speed_profiles || []) {
@@ -220,9 +267,7 @@ $("settings-form").addEventListener("submit", async (event) => {
   clearError();
 
   const button = $("save-settings");
-  const originalText = button.textContent;
-  button.disabled = true;
-  button.textContent = "Saving...";
+  setBusy(button, true, "Saving…");
 
   try {
     const current = await api("/api/settings", {
@@ -233,16 +278,12 @@ $("settings-form").addEventListener("submit", async (event) => {
     state.settings = current;
     $("download-dir").value = current.download_dir;
     $("settings-path").textContent = current.download_dir;
-    setMessage(
-      $("settings-msg"),
-      `Saved. New downloads will be written to ${current.download_dir}.`,
-      "ok"
-    );
+    swap($("settings-path"));
+    setMessage($("settings-msg"), `Saved. New downloads will be written to ${current.download_dir}.`, "ok");
   } catch (error) {
     setMessage($("settings-msg"), error.message, "bad");
   } finally {
-    button.disabled = false;
-    button.textContent = originalText;
+    setBusy(button, false);
   }
 });
 
@@ -276,52 +317,42 @@ $("reset-settings").addEventListener("click", () => {
 
 $("browse-dir").addEventListener("click", async () => {
   clearError();
-
   const button = $("browse-dir");
-  const originalText = button.textContent;
-  button.disabled = true;
-  button.textContent = "Opening...";
+  setBusy(button, true, "Opening…");
 
   try {
     const result = await api("/api/settings/browse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        initial_dir: $("download-dir").value.trim() || null,
-      }),
+      body: JSON.stringify({ initial_dir: $("download-dir").value.trim() || null }),
     });
 
     if (result.cancelled || !result.download_dir) {
-      setMessage($("settings-msg"), "Folder selection cancelled.", null);
+      setMessage($("settings-msg"), "No folder chosen. Your current location is unchanged.", null);
       return;
     }
 
     $("download-dir").value = result.download_dir;
-    setMessage($("settings-msg"), "Folder selected. Saving...", "ok");
+    setMessage($("settings-msg"), "Folder selected. Saving…", "ok");
     $("settings-form").requestSubmit();
   } catch (error) {
     setMessage($("settings-msg"), error.message, "bad");
   } finally {
-    button.disabled = false;
-    button.textContent = originalText;
+    setBusy(button, false);
   }
 });
+
+/* ─── Queue ─────────────────────────────────────────────────── */
 
 function estimateFor(item) {
   const info = item.info;
   if (item.audioOnly) {
     const audio = (info.audio_formats || [])[0];
-    return audio
-      ? { bytes: audio.size_bytes, estimate: audio.size_is_estimate }
-      : null;
+    return audio ? { bytes: audio.size_bytes, estimate: audio.size_is_estimate } : null;
   }
   if (item.formatId) {
-    const format = (info.video_formats || []).find(
-      (candidate) => candidate.format_id === item.formatId
-    );
-    if (format) {
-      return { bytes: format.size_bytes, estimate: format.size_is_estimate };
-    }
+    const format = (info.video_formats || []).find((c) => c.format_id === item.formatId);
+    if (format) return { bytes: format.size_bytes, estimate: format.size_is_estimate };
   }
   const best = (info.video_formats || [])[0];
   return best ? { bytes: best.size_bytes, estimate: best.size_is_estimate } : null;
@@ -329,8 +360,8 @@ function estimateFor(item) {
 
 function estimateText(item) {
   const estimate = estimateFor(item);
-  if (!estimate || !estimate.bytes) return "Size unknown until download";
-  return `${estimate.estimate ? "Estimated ~" : "Size "}${formatSize(estimate.bytes)}`;
+  if (!estimate || !estimate.bytes) return "Size shown once download starts";
+  return `${estimate.estimate ? "About " : "Size "}${formatSize(estimate.bytes)}`;
 }
 
 function makeThumbnail(info) {
@@ -348,9 +379,9 @@ function makeThumbnail(info) {
   return placeholder;
 }
 
-function buildQueueItem(item) {
+function buildQueueItem(item, animate) {
   const wrapper = document.createElement("div");
-  wrapper.className = "queue-item";
+  wrapper.className = "queue-item" + (animate ? " enter" : "");
   wrapper.dataset.key = item.key;
 
   wrapper.appendChild(makeThumbnail(item.info));
@@ -378,7 +409,7 @@ function buildQueueItem(item) {
   const field = document.createElement("div");
   field.className = "field";
   const select = document.createElement("select");
-  select.setAttribute("aria-label", "Format");
+  select.setAttribute("aria-label", "Quality and format");
 
   const best = document.createElement("option");
   best.value = "";
@@ -386,9 +417,7 @@ function buildQueueItem(item) {
   best.dataset.needsAudio = "0";
   select.appendChild(best);
 
-  for (const format of dedupeFormats(
-    (item.info.video_formats || []).filter((candidate) => candidate.format_id)
-  )) {
+  for (const format of dedupeFormats((item.info.video_formats || []).filter((c) => c.format_id))) {
     const option = document.createElement("option");
     option.value = format.format_id;
     option.textContent = formatLabel(format);
@@ -411,23 +440,25 @@ function buildQueueItem(item) {
 
   const estimate = document.createElement("span");
   estimate.className = "estimate";
+  estimate.setAttribute("aria-live", "polite");
 
-  const updateEstimate = () => {
+  const updateEstimate = (animateIt) => {
     estimate.textContent = estimateText(item);
+    if (animateIt) swap(estimate);
   };
-  updateEstimate();
+  updateEstimate(false);
 
   select.addEventListener("change", () => {
     item.formatId = select.value;
     const choice = select.selectedOptions[0];
     item.needsAudio = choice ? choice.dataset.needsAudio === "1" : false;
-    updateEstimate();
+    updateEstimate(true);
   });
 
   audioCheckbox.addEventListener("change", () => {
     item.audioOnly = audioCheckbox.checked;
     select.disabled = item.audioOnly;
-    updateEstimate();
+    updateEstimate(true);
   });
 
   field.appendChild(select);
@@ -447,7 +478,7 @@ function buildQueueItem(item) {
   const downloadButton = document.createElement("button");
   downloadButton.type = "button";
   downloadButton.className = "small";
-  downloadButton.textContent = "Download";
+  downloadButton.innerHTML = '<span class="spinner" aria-hidden="true"></span><span class="btn-label">Download</span>';
   downloadButton.addEventListener("click", () => startItems([item], downloadButton));
   actions.appendChild(downloadButton);
 
@@ -455,36 +486,53 @@ function buildQueueItem(item) {
   removeButton.type = "button";
   removeButton.className = "secondary small";
   removeButton.textContent = "Remove";
-  removeButton.addEventListener("click", () => {
-    state.queue = state.queue.filter((candidate) => candidate.key !== item.key);
-    renderQueue();
-  });
+  removeButton.addEventListener("click", () => removeQueueItem(item.key));
   actions.appendChild(removeButton);
 
   wrapper.appendChild(actions);
   return wrapper;
 }
 
-function renderQueue() {
-  const card = $("queue-card");
+function updateQueueChrome() {
   const count = state.queue.length;
-
   if (!count) {
-    card.classList.add("hidden");
-    $("queue").innerHTML = "";
+    $("queue-card").classList.add("hidden");
     $("queue-count").textContent = "";
-    return;
+  } else {
+    reveal($("queue-card"));
+    $("queue-count").textContent = `${count} video${count === 1 ? "" : "s"}`;
   }
-
-  card.classList.remove("hidden");
-  $("queue-count").textContent = `${count} video${count === 1 ? "" : "s"}`;
-
-  const container = $("queue");
-  container.innerHTML = "";
-  for (const item of state.queue) {
-    container.appendChild(buildQueueItem(item));
-  }
+  updateEmptyState();
 }
+
+// Add one row: the existing rows stay put, only the new one animates.
+function appendQueueItem(item) {
+  updateQueueChrome();
+  $("queue").appendChild(buildQueueItem(item, true));
+}
+
+function removeQueueItem(key) {
+  state.queue = state.queue.filter((c) => c.key !== key);
+  const el = $("queue").querySelector(`[data-key="${key}"]`);
+  leave(el, () => {
+    if (el) el.remove();
+    updateQueueChrome();
+  });
+}
+
+function removeQueueItems(keys) {
+  state.queue = state.queue.filter((c) => !keys.includes(c.key));
+  const els = keys
+    .map((k) => $("queue").querySelector(`[data-key="${k}"]`))
+    .filter(Boolean);
+  els.forEach((el) => !reduceMotion.matches && el.classList.add("leaving"));
+  setTimeout(() => {
+    els.forEach((el) => el.remove());
+    updateQueueChrome();
+  }, reduceMotion.matches ? 0 : EXIT_MS);
+}
+
+/* ─── Add video ─────────────────────────────────────────────── */
 
 $("add-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -495,9 +543,7 @@ $("add-form").addEventListener("submit", async (event) => {
   if (!url) return;
 
   const button = $("add-btn");
-  const originalText = button.textContent;
-  button.disabled = true;
-  button.textContent = "Adding...";
+  setBusy(button, true, "Looking it up…");
 
   try {
     const info = await api("/api/info", {
@@ -507,26 +553,40 @@ $("add-form").addEventListener("submit", async (event) => {
     });
 
     if (info.drm) {
-      showError(`${info.title || "This video"} is DRM-protected and cannot be downloaded.`);
+      showError(`${info.title || "This video"} is DRM-protected, so it can’t be downloaded.`);
       return;
     }
 
-    state.queue.push({
+    const item = {
       key: `q${++state.queueSeq}`,
       url,
       info,
       formatId: "",
       needsAudio: false,
       audioOnly: false,
-    });
+    };
+    state.queue.push(item);
     input.value = "";
     input.focus();
-    renderQueue();
+    appendQueueItem(item);
   } catch (error) {
     showError(error.message);
   } finally {
-    button.disabled = false;
-    button.textContent = originalText;
+    setBusy(button, false);
+  }
+});
+
+// One-tap paste, with graceful fallback when clipboard access is blocked.
+$("paste-btn").addEventListener("click", async () => {
+  try {
+    const text = (await navigator.clipboard.readText()).trim();
+    if (text) {
+      $("url").value = text;
+      $("url").focus();
+    }
+  } catch {
+    $("url").focus();
+    showError("Your browser blocked clipboard access. Press Ctrl/⌘ + V in the field instead.");
   }
 });
 
@@ -534,14 +594,10 @@ async function startItems(items, triggerButton) {
   if (!items.length) return;
   clearError();
 
-  let originalText = null;
-  if (triggerButton) {
-    originalText = triggerButton.textContent;
-    triggerButton.disabled = true;
-    triggerButton.textContent = "Starting...";
-  }
+  if (triggerButton) setBusy(triggerButton, true, "Starting…");
 
   const failures = [];
+  const started = [];
   for (const item of items) {
     try {
       await api("/api/jobs", {
@@ -555,23 +611,20 @@ async function startItems(items, triggerButton) {
           title: item.info.title,
         }),
       });
-      state.queue = state.queue.filter((candidate) => candidate.key !== item.key);
+      started.push(item.key);
     } catch (error) {
       failures.push(`${item.info.title || item.url}: ${error.message}`);
     }
   }
 
-  renderQueue();
+  removeQueueItems(started);
   await refreshJobs();
 
   if (failures.length) {
     showError(`Some videos could not be queued. ${failures.join(" ")}`);
   }
 
-  if (triggerButton && originalText !== null) {
-    triggerButton.disabled = false;
-    triggerButton.textContent = originalText;
-  }
+  if (triggerButton) setBusy(triggerButton, false);
 }
 
 $("download-all").addEventListener("click", () => {
@@ -580,9 +633,10 @@ $("download-all").addEventListener("click", () => {
 });
 
 $("clear-queue").addEventListener("click", () => {
-  state.queue = [];
-  renderQueue();
+  removeQueueItems(state.queue.map((i) => i.key));
 });
+
+/* ─── Jobs (keyed in-place updates, so polling never replays animation) ── */
 
 function jobDetail(job) {
   if (job.status === "queued") return "Waiting for a free slot";
@@ -611,65 +665,130 @@ function jobDetail(job) {
   return "";
 }
 
-function jobHtml(job) {
+function buildJobEl(job, animate) {
+  const el = document.createElement("article");
+  el.className = "job-item" + (animate ? " enter" : "");
+  el.dataset.jobId = job.id;
+  el.innerHTML = `
+    <div class="job-top">
+      <div>
+        <h3 class="job-title"></h3>
+        <p class="job-path hidden"></p>
+      </div>
+      <span class="pill"></span>
+    </div>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar"></div></div>
+    <div class="job-foot">
+      <p class="job-detail"></p>
+      <div class="job-actions">
+        <span class="save-slot"></span>
+        <button type="button" class="secondary small" data-job-action="remove"></button>
+      </div>
+    </div>`;
+  return el;
+}
+
+function updateJobEl(el, job, justFinished) {
   const percent = Math.max(0, Math.min(100, Number(job.progress) || 0));
   const terminal = ["finished", "error", "cancelled"].includes(job.status);
-  const actionLabel = terminal ? "Delete" : "Cancel";
-  const saveLink =
-    job.status === "finished" && job.download_url
-      ? `<a class="button small" href="${esc(job.download_url)}" download="${esc(
-          job.filename || "download"
-        )}">Save file</a>`
-      : "";
-  const path = job.output_dir
-    ? `<p class="job-path" title="${esc(job.output_dir)}">Saving to ${esc(
-        job.output_dir
-      )}</p>`
-    : "";
-  const title = job.title || job.filename || "Download";
-  const detailTitle = job.error_detail
-    ? ` title="${esc(job.error_detail)}"`
-    : "";
 
-  return `
-    <article class="job-item" data-job-id="${esc(job.id)}">
-      <div class="job-top">
-        <div>
-          <h3 class="job-title">${esc(title)}</h3>
-          ${path}
-        </div>
-        <span class="pill ${esc(job.status)}">${esc(
-          STATUS_LABELS[job.status] || job.status
-        )}</span>
-      </div>
-      <div class="progress"><div class="progress-bar" style="width:${percent}%"></div></div>
-      <div class="job-foot">
-        <p class="job-detail"${detailTitle}>${esc(jobDetail(job))}</p>
-        <div class="job-actions">
-          ${saveLink}
-          <button type="button" class="secondary small" data-job-action="remove" data-job-id="${esc(
-            job.id
-          )}">${actionLabel}</button>
-        </div>
-      </div>
-    </article>`;
+  el.dataset.status = job.status;
+  el.querySelector(".job-title").textContent = job.title || job.filename || "Download";
+
+  const pathEl = el.querySelector(".job-path");
+  if (job.output_dir) {
+    pathEl.textContent = `Saving to ${job.output_dir}`;
+    pathEl.title = job.output_dir;
+    pathEl.classList.remove("hidden");
+  } else {
+    pathEl.classList.add("hidden");
+  }
+
+  const pill = el.querySelector(".pill");
+  pill.className = `pill ${job.status}`;
+  pill.textContent = STATUS_LABELS[job.status] || job.status;
+
+  const bar = el.querySelector(".progress-bar");
+  const shown = job.status === "finished" ? 100 : percent;
+  bar.style.transform = `scaleX(${shown / 100})`;
+  el.querySelector(".progress").setAttribute("aria-valuenow", String(Math.round(shown)));
+  el.querySelector(".progress").setAttribute("aria-label", `${STATUS_LABELS[job.status] || job.status}`);
+
+  const detail = el.querySelector(".job-detail");
+  const detailText = jobDetail(job);
+  if (detail.textContent !== detailText) detail.textContent = detailText;
+  detail.title = job.error_detail || "";
+
+  // Save link: created once when the file is ready, so it never flickers.
+  const slot = el.querySelector(".save-slot");
+  if (job.status === "finished" && job.download_url) {
+    if (!slot.firstChild) {
+      const a = document.createElement("a");
+      a.className = "button small";
+      a.href = job.download_url;
+      a.setAttribute("download", job.filename || "download");
+      a.textContent = "Save file";
+      slot.appendChild(a);
+    }
+  } else if (slot.firstChild) {
+    slot.textContent = "";
+  }
+
+  const remove = el.querySelector("[data-job-action]");
+  const label = terminal ? "Delete" : "Cancel";
+  if (remove.textContent !== label) remove.textContent = label;
+  remove.dataset.jobId = job.id;
+
+  // Rare, meaningful moment: celebrate once, on the live transition only.
+  if (justFinished && !reduceMotion.matches) {
+    el.classList.add("celebrate");
+    setTimeout(() => el.classList.remove("celebrate"), 700);
+  }
 }
 
 function renderJobs() {
   const card = $("downloads-card");
+  const container = $("downloads");
+
   if (!state.jobs.length) {
     card.classList.add("hidden");
-    $("downloads").innerHTML = "";
+    container.innerHTML = "";
     $("downloads-summary").textContent = "";
+    updateEmptyState();
     return;
   }
 
-  const active = state.jobs.filter(
-    (job) => job.status === "queued" || job.status === "running"
-  ).length;
-  card.classList.remove("hidden");
-  $("downloads-summary").textContent = `${active} active · ${state.jobs.length} total`;
-  $("downloads").innerHTML = state.jobs.map(jobHtml).join("");
+  const active = state.jobs.filter((j) => j.status === "queued" || j.status === "running").length;
+  reveal(card);
+  $("downloads-summary").textContent =
+    active > 0 ? `${active} active · ${state.jobs.length} total` : `${state.jobs.length} total`;
+
+  const existing = new Map();
+  container.querySelectorAll(".job-item").forEach((el) => existing.set(el.dataset.jobId, el));
+  const firstPaint = existing.size === 0;
+  const seen = new Set();
+
+  state.jobs.forEach((job, index) => {
+    seen.add(job.id);
+    let el = existing.get(job.id);
+    let justFinished = false;
+    if (!el) {
+      // Animate only genuinely new rows, not the initial page load
+      el = buildJobEl(job, !firstPaint);
+      container.insertBefore(el, container.children[index] || null);
+    } else {
+      justFinished = el.dataset.status !== "finished" && job.status === "finished" &&
+        ["running", "queued"].includes(el.dataset.status);
+      if (container.children[index] !== el) container.insertBefore(el, container.children[index] || null);
+    }
+    updateJobEl(el, job, justFinished);
+  });
+
+  existing.forEach((el, id) => {
+    if (!seen.has(id) && !el.classList.contains("leaving")) el.remove();
+  });
+
+  updateEmptyState();
 }
 
 async function refreshJobs() {
@@ -695,13 +814,17 @@ $("downloads").addEventListener("click", async (event) => {
   try {
     await api(`/api/jobs/${encodeURIComponent(jobId)}`, { method: "DELETE" });
     state.jobs = state.jobs.filter((job) => job.id !== jobId);
-    renderJobs();
+    const el = button.closest(".job-item");
+    leave(el, () => renderJobs());
   } catch (error) {
     showError(error.message);
     button.disabled = false;
   }
 });
 
+/* ─── Boot ──────────────────────────────────────────────────── */
+
+updateEmptyState();
 loadSettings();
 refreshJobs();
 setInterval(() => {

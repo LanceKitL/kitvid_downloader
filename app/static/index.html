@@ -6,7 +6,7 @@
     <title>KitVid</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" /><!-- taste-skill-ignore: mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
@@ -16,21 +16,82 @@
           <span class="mark" aria-hidden="true">KV</span>
           <span class="brand-name">KitVid</span>
         </div>
-        <nav class="topbar-nav">
-          <!-- no nav items for single-screen app -->
-        </nav>
+        <span class="topbar-note">Runs locally on your computer</span>
+        <span class="orbs" aria-hidden="true"><i></i><i></i><i></i></span>
       </div>
     </header>
 
     <main class="canvas">
-      <h1 class="screen-title">KitVid Downloader</h1>
+      <h1 class="screen-title"><span class="sparkle" aria-hidden="true">✦</span>Download a video</h1>
 
-      <!-- Settings section: Download location -->
+      <!-- 1. Primary task first -->
+      <section class="panel panel-hero" aria-labelledby="add-h">
+        <form id="add-form">
+          <h2 id="add-h" class="sr-only">Add video</h2>
+          <label for="url">Video link</label>
+          <div class="input-row">
+            <input
+              id="url"
+              type="url"
+              placeholder="Paste a link, e.g. https://…"
+              autocomplete="off"
+              spellcheck="false"
+              required
+            />
+            <button type="button" id="paste-btn" class="secondary">Paste</button>
+            <button type="submit" id="add-btn"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Add video</span></button>
+          </div>
+          <p class="hint">Works with most sites supported by yt-dlp. DRM-protected streams can’t be downloaded.</p>
+        </form>
+      </section>
+
+      <!-- Errors: dismissible, announced -->
+      <section id="error" class="alert-strip hidden" role="alert">
+        <span id="error-text"></span>
+        <button type="button" id="error-close" class="icon-btn" aria-label="Dismiss message">×</button>
+      </section>
+
+      <!-- Empty state -->
+      <section id="empty-state" class="empty" aria-live="polite">
+        <div class="empty-art" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="empty-title">Nothing here yet</p>
+        <p class="muted">Paste a link above, pick a quality, and your download will appear here.</p>
+      </section>
+
+      <!-- Queue -->
+      <section id="queue-card" class="panel hidden" aria-labelledby="queue-h">
+        <div class="panel-head">
+          <h2 id="queue-h" class="section-title">Ready to download <span id="queue-count" class="count"></span></h2>
+          <div class="action-row">
+            <button id="download-all" type="button">Download all</button>
+            <button id="clear-queue" type="button" class="secondary">Clear</button>
+          </div>
+        </div>
+        <div id="queue" class="queue"></div>
+      </section>
+
+      <!-- Downloads -->
+      <section id="downloads-card" class="panel hidden" aria-labelledby="downloads-h">
+        <div class="panel-head">
+          <h2 id="downloads-h" class="section-title">Downloads</h2>
+          <div class="action-row">
+            <span id="downloads-summary" class="muted"></span>
+            <button id="save-all" type="button" class="small hidden"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Save all</span></button>
+          </div>
+        </div>
+        <div id="downloads" class="downloads"></div>
+      </section>
+
+      <!-- 2. Preferences, set-and-forget, so they come last -->
+      <h2 class="group-title">Preferences</h2>
+
       <section class="panel" aria-labelledby="settings-h">
         <div class="panel-head">
-          <h2 id="settings-h" class="section-title">Download location</h2>
+          <h3 id="settings-h" class="section-title">Where files are saved</h3>
         </div>
-        <p id="settings-path" class="path hint">Loading…</p>
+        <p id="settings-path" class="path">Loading…</p>
         <form id="settings-form" class="settings-form">
           <label class="sr-only" for="download-dir">Download folder</label>
           <div class="path-row">
@@ -48,62 +109,19 @@
             <button type="button" id="reset-settings" class="secondary">Reset to default</button>
           </div>
         </form>
-        <p id="settings-msg" class="hint">Browse opens your system folder chooser. You can also type or paste a path.</p>
+        <p id="settings-msg" class="hint" aria-live="polite">Browse opens your system folder chooser. You can also type or paste a path.</p>
       </section>
 
-      <!-- Speed section -->
       <section class="panel" aria-labelledby="speed-h">
         <div class="panel-head">
-          <h2 id="speed-h" class="section-title">Download speed</h2>
+          <h3 id="speed-h" class="section-title">Download speed</h3>
           <span id="aria2-status" class="badge hidden"></span>
         </div>
         <div class="speed-row">
           <label for="speed-profile">Speed profile</label>
           <select id="speed-profile"></select>
         </div>
-        <p id="speed-msg" class="hint"></p>
-      </section>
-
-      <!-- Add video form -->
-      <section class="panel" aria-labelledby="add-h">
-        <form id="add-form">
-          <h2 id="add-h" class="section-title">Add video</h2>
-          <div class="input-row">
-            <input
-              id="url"
-              type="url"
-              placeholder="https://…"
-              autocomplete="off"
-              spellcheck="false"
-              required
-            />
-            <button type="submit" id="add-btn">Add video</button>
-          </div>
-          <p class="hint">Paste any URL supported by yt-dlp. DRM-protected streams are not supported.</p>
-        </form>
-      </section>
-
-      <section id="error" class="alert-strip hidden" role="alert"></section>
-
-      <!-- Queue -->
-      <section id="queue-card" class="panel hidden" aria-labelledby="queue-h">
-        <div class="panel-head">
-          <h2 id="queue-h" class="section-title">Queue <span id="queue-count" class="count"></span></h2>
-          <div class="action-row">
-            <button id="download-all" type="button">Download all</button>
-            <button id="clear-queue" type="button" class="secondary">Clear</button>
-          </div>
-        </div>
-        <div id="queue" class="queue"></div>
-      </section>
-
-      <!-- Downloads -->
-      <section id="downloads-card" class="panel hidden" aria-labelledby="downloads-h">
-        <div class="panel-head">
-          <h2 id="downloads-h" class="section-title">Downloads</h2>
-          <span id="downloads-summary" class="muted"></span>
-        </div>
-        <div id="downloads" class="downloads"></div>
+        <p id="speed-msg" class="hint" aria-live="polite"></p>
       </section>
     </main>
 
