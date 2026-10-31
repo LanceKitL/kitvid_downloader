@@ -1,5 +1,8 @@
 # KitVid-Downloader
-
+![KitVid demo](docs/demo.gif)
+<p align="center">
+  <img src="docs/demo.gif" alt="KitVid demo" width="720">
+</p>
 A local web front end for `yt-dlp` and `FFmpeg`. Add videos to a queue, choose a format for each, track progress, and save the results to a folder you pick. Everything runs on your machine, from your IP address.
 
 > **Legal notice:** Use this only for content you own or are allowed to save, such as Creative Commons, public domain, or a site's permitted offline use. Respect copyright and each site's terms of service. DRM-protected streams are not supported.
