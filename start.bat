@@ -2,6 +2,7 @@
 setlocal
 cd /d "%~dp0"
 
+REM ---------- Python ----------
 set "PYTHON_EXE="
 call :find_python
 if defined PYTHON_EXE goto :python_ready
@@ -46,6 +47,7 @@ if not exist "requirements.txt" (
   exit /b 1
 )
 
+REM ---------- Virtual environment ----------
 if exist ".venv\Scripts\python.exe" (
   ".venv\Scripts\python.exe" -m pip --version >nul 2>&1
   if errorlevel 1 (
@@ -62,18 +64,17 @@ if not exist ".venv\Scripts\python.exe" (
   if errorlevel 1 goto :setup_error
 )
 
+REM ---------- Python packages and yt-dlp ----------
 echo Checking dependencies...
 ".venv\Scripts\python.exe" -m pip install -r requirements.txt
 if errorlevel 1 goto :setup_error
 
-REM Make sure yt-dlp exists in the venv
 if not exist ".venv\Scripts\yt-dlp.exe" (
   echo Installing yt-dlp...
   ".venv\Scripts\python.exe" -m pip install -U yt-dlp
   if errorlevel 1 goto :setup_error
 )
 
-REM Put the venv Scripts folder on PATH for this session and tell the app where yt-dlp is
 set "PATH=%~dp0.venv\Scripts;%PATH%"
 set "VD_YTDLP=%~dp0.venv\Scripts\yt-dlp.exe"
 
@@ -84,14 +85,11 @@ if errorlevel 1 (
   goto :setup_error
 )
 
-where ffmpeg >nul 2>&1
-if errorlevel 1 (
-  echo.
-  echo WARNING: FFmpeg not found. Download it from https://www.gyan.dev/ffmpeg/builds/
-  echo Get the "release essentials" zip, extract it, and add its bin folder to PATH.
-  echo.
-)
+REM ---------- FFmpeg ----------
+call :ensure_ffmpeg
+if errorlevel 1 goto :ffmpeg_error
 
+REM ---------- Launch ----------
 ".venv\Scripts\python.exe" launcher.py
 if errorlevel 1 pause
 exit /b 0
@@ -100,6 +98,17 @@ exit /b 0
 echo.
 echo Setup failed. Scroll up for the actual error message.
 echo Common causes: no internet, Python version incompatible with a package, missing build tools.
+echo.
+pause
+exit /b 1
+
+:ffmpeg_error
+echo.
+echo FFmpeg could not be installed automatically.
+echo Download "release essentials" from https://www.gyan.dev/ffmpeg/builds/
+echo Extract it so that ffmpeg.exe ends up at:
+echo   %~dp0tools\ffmpeg\bin\ffmpeg.exe
+echo Then run this file again.
 echo.
 pause
 exit /b 1
@@ -116,4 +125,33 @@ for %%V in (313 312 311) do (
     if exist "%LocalAppData%\Programs\Python\Python%%V\python.exe" set PYTHON_EXE="%LocalAppData%\Programs\Python\Python%%V\python.exe"
   )
 )
+exit /b 0
+
+:ensure_ffmpeg
+where ffmpeg >nul 2>&1
+if not errorlevel 1 exit /b 0
+
+set "FFMPEG_DIR=%~dp0tools\ffmpeg"
+if exist "%FFMPEG_DIR%\bin\ffmpeg.exe" goto :ffmpeg_path
+
+echo.
+echo FFmpeg not found. Downloading it (about 100 MB)...
+set "FFMPEG_ZIP=%TEMP%\ffmpeg-release-essentials.zip"
+curl.exe -L --fail -o "%FFMPEG_ZIP%" https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+if errorlevel 1 exit /b 1
+
+echo Extracting FFmpeg...
+if exist "%FFMPEG_DIR%_tmp" rmdir /s /q "%FFMPEG_DIR%_tmp"
+powershell -NoProfile -Command "Expand-Archive -LiteralPath '%FFMPEG_ZIP%' -DestinationPath '%FFMPEG_DIR%_tmp' -Force"
+if errorlevel 1 exit /b 1
+
+mkdir "%FFMPEG_DIR%\bin" >nul 2>&1
+for /d %%D in ("%FFMPEG_DIR%_tmp\*") do xcopy /e /i /y "%%D\bin\*" "%FFMPEG_DIR%\bin\" >nul
+rmdir /s /q "%FFMPEG_DIR%_tmp" >nul 2>&1
+del "%FFMPEG_ZIP%" >nul 2>&1
+
+if not exist "%FFMPEG_DIR%\bin\ffmpeg.exe" exit /b 1
+
+:ffmpeg_path
+set "PATH=%FFMPEG_DIR%\bin;%PATH%"
 exit /b 0
