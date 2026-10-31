@@ -26,7 +26,7 @@ A local web front end for `yt-dlp` and `FFmpeg`. Add videos to a queue, choose a
 - Size estimates before downloading, based on bitrate and duration when the site does not report a size.
 - Editable download folder with a native folder chooser, saved in `settings.json`.
 - Automatic cleanup of finished files after a configurable time.
-- Launchers for Windows, Linux, and macOS.
+- Launchers for Windows, Linux, and macOS that install what is missing on the first run and start instantly afterward.
 
 ## How it works
 
@@ -50,7 +50,12 @@ flowchart LR
 
 > **Warning:** Avoid very new Python releases (3.14 or newer). Some dependencies, such as PyYAML, may not have prebuilt packages for them yet. Installation then fails with "Microsoft Visual C++ 14.0 or greater is required". See [Troubleshooting](#troubleshooting).
 
-On Windows, `start.bat` handles Python for you: it looks for Python 3.11 to 3.13 and installs 3.12 if none is found. You only need to install FFmpeg yourself.
+On Windows, `start.bat` handles both Python and FFmpeg for you:
+
+- It looks for Python 3.11 to 3.13 and installs 3.12 if none is found.
+- It looks for FFmpeg on your `PATH` or in `tools\ffmpeg`, and downloads it into `tools\ffmpeg` if neither exists.
+
+On Linux and macOS, `start.sh` creates the virtual environment and installs the Python packages, but you install Python and FFmpeg yourself.
 
 ### Step 1: Get the project
 
@@ -108,15 +113,18 @@ Confirm that `python3 --version` reports 3.11 to 3.13.
 ### Step 3: Install FFmpeg
 
 <details open>
-<summary>Windows (without winget)</summary>
+<summary>Windows</summary>
+
+Automatic: skip this step. If FFmpeg is not found, `start.bat` downloads it to `tools\ffmpeg\bin` inside the project folder (from gyan.dev, with a GitHub mirror as a fallback). It does not change your system `PATH`.
+
+Manual (optional, if the automatic download fails or you want a system-wide install):
 
 1. Download `ffmpeg-release-essentials.zip` from <https://www.gyan.dev/ffmpeg/builds/>.
-2. Extract it to a permanent location, for example `C:\ffmpeg`.
-3. Add `C:\ffmpeg\bin` to your `PATH`:
+2. Extract it so that `ffmpeg.exe` ends up at `tools\ffmpeg\bin\ffmpeg.exe` in the project folder. Alternatively, extract it to a permanent location such as `C:\ffmpeg` and add `C:\ffmpeg\bin` to your `PATH`:
    - Search for "Edit the system environment variables" and open it.
    - Click "Environment Variables", select `Path` under "User variables", then click "Edit".
    - Click "New", enter `C:\ffmpeg\bin`, and confirm every dialog.
-4. Open a new terminal and verify:
+3. Open a new terminal and verify (system-wide installs only):
 
    ```bat
    ffmpeg -version
@@ -159,13 +167,21 @@ sudo apt install ffmpeg
 <details open>
 <summary>Windows</summary>
 
-Double-click `start.bat`. The script:
+Double-click `start.bat`.
 
-1. Finds Python 3.11 to 3.13, or installs 3.12 if none is found.
-2. Creates `.venv`, and rebuilds it if it is broken.
-3. Installs dependencies from `requirements.txt`.
-4. Warns you if FFmpeg is missing.
+**Every run starts with a quick check.** If FFmpeg, the virtual environment, yt-dlp, and the packages from `requirements.txt` are all already in place, the script skips setup and starts the app right away. Nothing is downloaded or reinstalled.
+
+**If something is missing or outdated, the script sets up only that part:**
+
+1. Installs FFmpeg into `tools\ffmpeg` if it is not on your `PATH` or already there.
+2. Finds Python 3.11 to 3.13, or installs 3.12 if none is found.
+3. Creates `.venv`, and rebuilds it if it is broken or uses an unsupported Python.
+4. Installs dependencies from `requirements.txt` and yt-dlp, then saves a hash of `requirements.txt` in `.venv\.deps_hash`.
 5. Starts the server and opens <http://127.0.0.1:8000> in your browser.
+
+If you edit `requirements.txt`, the hash no longer matches, so the next run reinstalls the packages once.
+
+If you close the window or cancel while setup is running, a background watcher removes the partial FFmpeg download or virtual environment. The next run starts that step cleanly.
 
 Keep the console window open while you use the app. Close it or press `Ctrl+C` to stop.
 
@@ -179,6 +195,21 @@ If the script installs Python on its first run and asks you to close the window 
 ```bash
 chmod +x start.sh   # first time only
 ./start.sh
+```
+
+**Every run starts with a quick check.** If `.venv` works, uses Python 3.11 or newer, and `requirements.txt` has not changed since the last install, the script starts the app immediately without calling pip.
+
+**If something is missing or outdated, the script:**
+
+1. Creates `.venv` if it is missing or broken (using `python3`, or the interpreter in the `PYTHON` environment variable).
+2. Installs dependencies from `requirements.txt`.
+3. Saves a hash of `requirements.txt` in `.venv/.deps_hash`.
+4. Starts the server and opens the browser.
+
+To use a specific Python:
+
+```bash
+PYTHON=/path/to/python3.12 ./start.sh
 ```
 
 To set it up manually:
@@ -197,7 +228,7 @@ python launcher.py
 ### Verify the setup
 
 - `py -3.12 --version` (or `python3 --version`) reports 3.11 to 3.13.
-- `ffmpeg -version` prints a version.
+- `ffmpeg -version` prints a version, or `tools\ffmpeg\bin\ffmpeg.exe` exists on Windows.
 - <http://127.0.0.1:8000> loads.
 - Adding a test URL creates a card with a title and size estimates.
 
@@ -242,7 +273,8 @@ The chooser opens on the machine running the server. Because the app is local-on
 | `VD_MAX_FILESIZE` | unset | Passed to `yt-dlp --max-filesize`, for example `2G`. |
 | `VD_ALLOW_PRIVATE_NETWORK` | `0` | Set to `1` to allow URLs that resolve to private or loopback addresses. |
 | `VD_HOST` / `VD_PORT` | `127.0.0.1` / `8000` | Bind address. Keep it on loopback. |
-| `VD_YTDLP` | `yt-dlp` | Path to the yt-dlp binary. |
+| `VD_YTDLP` | `yt-dlp` | Path to the yt-dlp binary. `start.bat` sets this to the copy inside `.venv`. |
+| `PYTHON` | `python3` | Interpreter `start.sh` uses to create `.venv`. |
 | `VD_FOLDER_PICKER_FAKE` | unset | Test hook: return this folder (or `cancel`) instead of opening a chooser. |
 
 Windows (current session):
@@ -343,23 +375,30 @@ Windows includes a placeholder `python.exe` that opens the Store. Install Python
 <details>
 <summary>"winget" is not recognized</summary>
 
-winget is not required. Use the manual Python and FFmpeg steps above. winget is provided by "App Installer" in the Microsoft Store if you want it later.
+winget is not required. `start.bat` downloads Python and FFmpeg itself, and the manual steps above also work. winget is provided by "App Installer" in the Microsoft Store if you want it later.
 
 </details>
 
 <details>
 <summary>FFmpeg is not found, or MP3 and merged downloads fail</summary>
 
-1. Run `ffmpeg -version` to check whether it is installed.
-2. If that fails, confirm the `bin` folder is on your `PATH`.
-3. Close and reopen your terminal, or `start.bat`, so the new `PATH` is loaded.
+1. On Windows, run `start.bat` again. If FFmpeg is missing, it downloads it automatically. If the download fails, the script prints where to place `ffmpeg.exe`: `tools\ffmpeg\bin\ffmpeg.exe` in the project folder.
+2. On Linux and macOS, run `ffmpeg -version` to check whether it is installed, and install it with your package manager if not.
+3. If it is installed system-wide but not found, confirm the `bin` folder is on your `PATH`, then close and reopen your terminal so the new `PATH` is loaded.
 
 </details>
 
 <details>
 <summary>Setup keeps failing after an interrupted install</summary>
 
-Delete the `.venv` folder and run the launcher again to start from a clean environment.
+The launcher normally cleans up partial installs on its own. If it still fails, delete the `.venv` folder (and `tools\ffmpeg` on Windows if FFmpeg is the problem) and run the launcher again to start from a clean environment.
+
+</details>
+
+<details>
+<summary>Dependencies are not being reinstalled, or I want to force a reinstall</summary>
+
+The launcher skips installation when `.venv\.deps_hash` (or `.venv/.deps_hash` on Linux and macOS) matches the current `requirements.txt`. Editing `requirements.txt` triggers a reinstall automatically. To force one without editing it, delete the `.deps_hash` file, or delete the whole `.venv` folder, and run the launcher again.
 
 </details>
 
@@ -380,7 +419,7 @@ While the console window is still running, open <http://127.0.0.1:8000> manually
 <details>
 <summary>A site stopped working</summary>
 
-Sites change their players often. Update yt-dlp inside the environment, then re-run the tests:
+Sites change their players often. The launcher does not update yt-dlp once it is installed, so update it yourself inside the environment, then re-run the tests:
 
 ```bash
 # Windows
@@ -409,6 +448,7 @@ Finished and errored job files are deleted after `VD_FILE_TTL_MINUTES` (default 
 - Jobs live in memory and are lost when the server restarts. Finished files on disk remain until you delete them.
 - Finished files are served without HTTP Range support.
 - Changing the download folder does not move existing files.
+- `start.sh` does not install Python or FFmpeg. Only `start.bat` does that.
 
 ## Tests
 
