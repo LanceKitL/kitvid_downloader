@@ -93,23 +93,27 @@
         </div>
         <p id="settings-path" class="path">Loading…</p>
         <form id="settings-form" class="settings-form">
-          <label class="sr-only" for="download-dir">Download folder</label>
-          <div class="path-row">
-            <input
-              id="download-dir"
-              type="text"
-              spellcheck="false"
-              autocomplete="off"
-              placeholder="Choose a folder or type a path"
-            />
-            <button type="button" id="browse-dir" class="secondary">Browse…</button>
-          </div>
           <div class="action-row">
-            <button type="submit" id="save-settings">Save location</button>
+            <button type="button" id="browse-dir"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Change folder…</span></button>
             <button type="button" id="reset-settings" class="secondary">Reset to default</button>
           </div>
+          <details id="path-advanced" class="advanced">
+            <summary>Type a path instead</summary>
+            <label class="sr-only" for="download-dir">Download folder</label>
+            <div class="path-row">
+              <input
+                id="download-dir"
+                type="text"
+                spellcheck="false"
+                autocomplete="off"
+                placeholder="/path/to/your/folder"
+              />
+              <button type="submit" id="save-settings" class="secondary">Save location</button>
+            </div>
+            <p class="hint">Useful if the folder chooser doesn’t open, for example when KitVid runs on another machine.</p>
+          </details>
         </form>
-        <p id="settings-msg" class="hint" aria-live="polite">Browse opens your system folder chooser. You can also type or paste a path.</p>
+        <p id="settings-msg" class="hint" aria-live="polite">Pick a folder and it’s saved straight away.</p>
       </section>
 
       <section class="panel" aria-labelledby="speed-h">

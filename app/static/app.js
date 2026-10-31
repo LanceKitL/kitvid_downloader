@@ -367,7 +367,9 @@ $("browse-dir").addEventListener("click", async () => {
     setMessage($("settings-msg"), "Folder selected. Saving…", "ok");
     $("settings-form").requestSubmit();
   } catch (error) {
-    setMessage($("settings-msg"), error.message, "bad");
+    // Folder chooser unavailable (e.g. headless server): offer manual entry
+    $("path-advanced").open = true;
+    setMessage($("settings-msg"), `${error.message} You can type the path instead.`, "bad");
   } finally {
     setBusy(button, false);
   }

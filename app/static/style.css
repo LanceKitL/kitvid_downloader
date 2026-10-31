@@ -318,7 +318,7 @@ button.is-busy .spinner { display: inline-block; animation: spin 700ms linear in
 .switch-text strong { font-weight: 700; }
 
 /* ─── Advanced disclosure ───────────────────────────────────── */
-.advanced { margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(106,128,166,0.45); }
+.advanced { margin-top: 4px; padding-top: 12px; border-top: 1px dashed rgba(106,128,166,0.45); }
 .advanced summary {
   cursor: pointer; font-size: var(--fs-small); font-weight: 700; color: var(--muted);
   list-style: none; display: inline-flex; align-items: center; gap: 6px; user-select: none;
@@ -326,7 +326,7 @@ button.is-busy .spinner { display: inline-block; animation: spin 700ms linear in
 .advanced summary::-webkit-details-marker { display: none; }
 .advanced summary::before { content: "▸"; display: inline-block; transition: transform var(--t-fast) var(--ease-out); }
 .advanced[open] summary::before { transform: rotate(90deg); }
-.advanced .speed-row { margin-top: 12px; }
+.advanced .speed-row, .advanced .path-row { margin-top: 12px; }
 
 /* ─── Badges ────────────────────────────────────────────────── */
 .badge {
