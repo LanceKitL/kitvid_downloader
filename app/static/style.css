@@ -1,0 +1,636 @@
+/* ─── Design tokens ─────────────────────────────────────────── */
+:root {
+  --ground:  #f2f4f7;
+  --surface: #ffffff;
+  --raised:  #eeeeee;
+  --border:  #e6e6e6;
+  --rule:    #f0f0f0;
+  --control: #d4d4d4;
+  --text:    #0a0a0a;
+  --muted:   #6b6b6b;
+  --accent:  #141414;
+
+  --positive: #2e7d32;
+  --negative: #c4242a;
+  --warning:  #92400e;
+
+  --chart-1: #141414;
+  --chart-2: #8a8a8a;
+  --chart-3: #1d5fbf;
+
+  --pill-positive-bg:  #dcfae5;
+  --pill-positive-ink: #04250e;
+  --pill-negative-bg:  #ffedea;
+  --pill-negative-ink: #831c1e;
+  --pill-warning-bg:   #fffbeb;
+  --pill-warning-ink:  #92400e;
+  --pill-neutral-bg:   #eeeeee;
+  --pill-neutral-ink:  #3d3d3d;
+
+  --radius-card:    8px;
+  --radius-control: 6px;
+  --gap:            12px;
+  --pad:            24px;
+  --control-height: 36px;
+
+  --fs-title:   24px;
+  --fs-section: 16px;
+  --fs-body:    14px;
+  --fs-small:   12px;
+
+  color-scheme: light;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--ground);
+  color: var(--text);
+  font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+/* ─── Accessibility ─────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ─── Top bar ───────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 48px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border); /* taste-skill-ignore: hairline — topbar separator required by spec */
+}
+
+.topbar-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--pad);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-size: var(--fs-body);
+  font-weight: 500;
+  margin-left: 8px;
+  color: var(--text);
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── Canvas ────────────────────────────────────────────────── */
+.canvas {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px var(--pad) 48px;
+  display: grid;
+  gap: var(--gap);
+}
+
+/* ─── Panel ─────────────────────────────────────────────────── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px var(--pad);
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap);
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+/* ─── Typography ────────────────────────────────────────────── */
+.section-title {
+  margin: 0;
+  font-size: var(--fs-section);
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0;
+}
+
+label {
+  display: block;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.hint {
+  font-size: var(--fs-small);
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.hint.ok {
+  color: var(--positive);
+}
+
+.hint.bad {
+  color: var(--negative);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: var(--fs-small);
+}
+
+.path {
+  font-family: "Geist Mono", "Menlo", "Consolas", ui-monospace, monospace; /* taste-skill-ignore: mono — spec requires Geist Mono for numeric/path data */
+  font-size: var(--fs-small);
+  word-break: break-all;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+/* ─── Inputs & Selects ──────────────────────────────────────── */
+input[type="url"],
+input[type="text"],
+select {
+  height: var(--control-height);
+  background: var(--surface);
+  border: 1px solid var(--control);
+  border-radius: var(--radius-control);
+  padding: 0 10px;
+  font-size: var(--fs-body);
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  appearance: auto;
+}
+
+input[type="url"]:focus,
+input[type="text"]:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+input:disabled,
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Buttons ───────────────────────────────────────────────── */
+button,
+.button {
+  height: var(--control-height);
+  padding: 0 16px;
+  background: var(--accent);
+  color: #ffffff;
+  border: 0;
+  border-radius: var(--radius-control);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+button:hover,
+.button:hover {
+  background: #2a2a2a;
+}
+
+button:disabled,
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secondary,
+.button.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--control);
+}
+
+button.secondary:hover,
+.button.secondary:hover {
+  background: var(--raised);
+}
+
+button.small,
+.button.small {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+/* ─── Utility rows ──────────────────────────────────────────── */
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.input-row button {
+  flex: 0 0 auto;
+}
+
+/* ─── Settings form ─────────────────────────────────────────── */
+.settings-form {
+  display: grid;
+  gap: 10px;
+}
+
+.path-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.path-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.path-row button {
+  flex: 0 0 auto;
+}
+
+/* ─── Speed row ─────────────────────────────────────────────── */
+.speed-row {
+  display: grid;
+  gap: 6px;
+  max-width: 440px;
+}
+
+/* ─── Badge (aria2 status) ──────────────────────────────────── */
+.badge {
+  font-size: var(--fs-small);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--pill-neutral-bg);
+  color: var(--pill-neutral-ink);
+}
+
+.badge.good {
+  background: var(--pill-positive-bg);
+  color: var(--pill-positive-ink);
+}
+
+/* ─── Count badge ───────────────────────────────────────────── */
+.count {
+  font-size: var(--fs-small);
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+/* ─── Alert strip ───────────────────────────────────────────── */
+.alert-strip {
+  background: var(--pill-negative-bg);
+  color: var(--pill-negative-ink);
+  border-radius: var(--radius-card);
+  padding: 12px 16px;
+  font-size: var(--fs-body);
+}
+
+/* ─── Queue ─────────────────────────────────────────────────── */
+.queue {
+  display: grid;
+}
+
+.queue-item {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: var(--gap);
+  align-items: start;
+  padding: 16px 0;
+  border-top: 1px solid var(--rule); /* taste-skill-ignore: hairline — queue row divider required by spec */
+}
+
+.queue-item:first-child {
+  border-top: none;
+}
+
+.queue-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--ground);
+  display: block;
+}
+
+.queue-thumb.placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: var(--fs-small);
+}
+
+.queue-body {
+  min-width: 0;
+}
+
+.queue-title {
+  font-size: var(--fs-body);
+  margin: 0 0 4px;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.queue-meta {
+  font-size: var(--fs-small);
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.queue-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: flex-end;
+}
+
+.queue-controls .field {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.queue-controls select {
+  height: 32px;
+  font-size: 13px;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-body);
+  font-weight: 400;
+  color: var(--text);
+  cursor: pointer;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 4px;
+}
+
+.check input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.estimate {
+  display: block;
+  font-size: var(--fs-small);
+  color: var(--muted);
+  font-family: "Geist Mono", "Menlo", "Consolas", ui-monospace, monospace; /* taste-skill-ignore: mono — spec requires Geist Mono for numeric/path data */
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+
+.queue-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+/* ─── Downloads ─────────────────────────────────────────────── */
+.downloads {
+  display: grid;
+}
+
+.job-item {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule); /* taste-skill-ignore: hairline — job row divider required by spec */
+}
+
+.job-item:first-child {
+  border-top: none;
+}
+
+.job-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.job-title {
+  font-size: var(--fs-body);
+  margin: 0 0 2px;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.job-path {
+  font-size: var(--fs-small);
+  color: var(--muted);
+  margin: 0;
+  font-family: "Geist Mono", "Menlo", "Consolas", ui-monospace, monospace; /* taste-skill-ignore: mono — spec requires Geist Mono for numeric/path data */
+  word-break: break-all;
+}
+
+/* ─── Progress ──────────────────────────────────────────────── */
+.progress {
+  height: 3px;
+  background: var(--raised);
+  margin: 10px 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--chart-3);
+  transition: width 0.3s ease;
+}
+
+/* ─── Job foot ──────────────────────────────────────────────── */
+.job-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.job-detail {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--muted);
+  font-family: "Geist Mono", "Menlo", "Consolas", ui-monospace, monospace; /* taste-skill-ignore: mono — spec requires Geist Mono for numeric/path data */
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.job-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ─── Status pills ──────────────────────────────────────────── */
+.pill {
+  flex-shrink: 0;
+  display: inline-block;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--pill-neutral-bg);
+  color: var(--pill-neutral-ink);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.pill.running {
+  background: var(--pill-neutral-bg);
+  color: var(--pill-neutral-ink);
+}
+
+.pill.finished {
+  background: var(--pill-positive-bg);
+  color: var(--pill-positive-ink);
+}
+
+.pill.error {
+  background: var(--pill-negative-bg);
+  color: var(--pill-negative-ink);
+}
+
+.pill.queued {
+  background: var(--pill-neutral-bg);
+  color: var(--pill-neutral-ink);
+}
+
+.pill.cancelled {
+  background: var(--pill-warning-bg);
+  color: var(--pill-warning-ink);
+}
+
+/* ─── Footer ────────────────────────────────────────────────── */
+.page-footer {
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--muted);
+  padding: 16px var(--pad);
+}
+
+/* ─── Phone breakpoint ──────────────────────────────────────── */
+@media (max-width: 600px) {
+  .topbar-inner {
+    padding: 0 16px;
+  }
+
+  .canvas {
+    padding: 16px 16px 32px;
+  }
+
+  .queue-item {
+    grid-template-columns: 1fr;
+  }
+
+  .queue-thumb {
+    max-width: 260px;
+  }
+
+  .queue-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .queue-actions button {
+    flex: 1;
+  }
+
+  .path-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .path-row button {
+    width: 100%;
+  }
+
+  .job-top {
+    flex-wrap: wrap;
+  }
+}

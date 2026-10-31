@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KitVid</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" /><!-- taste-skill-ignore: mono -->
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <span class="mark" aria-hidden="true">KV</span>
+          <span class="brand-name">KitVid</span>
+        </div>
+        <nav class="topbar-nav">
+          <!-- no nav items for single-screen app -->
+        </nav>
+      </div>
+    </header>
+
+    <main class="canvas">
+      <h1 class="screen-title">KitVid Downloader</h1>
+
+      <!-- Settings section: Download location -->
+      <section class="panel" aria-labelledby="settings-h">
+        <div class="panel-head">
+          <h2 id="settings-h" class="section-title">Download location</h2>
+        </div>
+        <p id="settings-path" class="path hint">Loading…</p>
+        <form id="settings-form" class="settings-form">
+          <label class="sr-only" for="download-dir">Download folder</label>
+          <div class="path-row">
+            <input
+              id="download-dir"
+              type="text"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Choose a folder or type a path"
+            />
+            <button type="button" id="browse-dir" class="secondary">Browse…</button>
+          </div>
+          <div class="action-row">
+            <button type="submit" id="save-settings">Save location</button>
+            <button type="button" id="reset-settings" class="secondary">Reset to default</button>
+          </div>
+        </form>
+        <p id="settings-msg" class="hint">Browse opens your system folder chooser. You can also type or paste a path.</p>
+      </section>
+
+      <!-- Speed section -->
+      <section class="panel" aria-labelledby="speed-h">
+        <div class="panel-head">
+          <h2 id="speed-h" class="section-title">Download speed</h2>
+          <span id="aria2-status" class="badge hidden"></span>
+        </div>
+        <div class="speed-row">
+          <label for="speed-profile">Speed profile</label>
+          <select id="speed-profile"></select>
+        </div>
+        <p id="speed-msg" class="hint"></p>
+      </section>
+
+      <!-- Add video form -->
+      <section class="panel" aria-labelledby="add-h">
+        <form id="add-form">
+          <h2 id="add-h" class="section-title">Add video</h2>
+          <div class="input-row">
+            <input
+              id="url"
+              type="url"
+              placeholder="https://…"
+              autocomplete="off"
+              spellcheck="false"
+              required
+            />
+            <button type="submit" id="add-btn">Add video</button>
+          </div>
+          <p class="hint">Paste any URL supported by yt-dlp. DRM-protected streams are not supported.</p>
+        </form>
+      </section>
+
+      <section id="error" class="alert-strip hidden" role="alert"></section>
+
+      <!-- Queue -->
+      <section id="queue-card" class="panel hidden" aria-labelledby="queue-h">
+        <div class="panel-head">
+          <h2 id="queue-h" class="section-title">Queue <span id="queue-count" class="count"></span></h2>
+          <div class="action-row">
+            <button id="download-all" type="button">Download all</button>
+            <button id="clear-queue" type="button" class="secondary">Clear</button>
+          </div>
+        </div>
+        <div id="queue" class="queue"></div>
+      </section>
+
+      <!-- Downloads -->
+      <section id="downloads-card" class="panel hidden" aria-labelledby="downloads-h">
+        <div class="panel-head">
+          <h2 id="downloads-h" class="section-title">Downloads</h2>
+          <span id="downloads-summary" class="muted"></span>
+        </div>
+        <div id="downloads" class="downloads"></div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>KitVid runs locally with yt-dlp and FFmpeg. Personal use only.</span>
+    </footer>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
