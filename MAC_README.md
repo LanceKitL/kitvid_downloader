@@ -37,4 +37,4 @@
 ## If something goes wrong
 
 - **Stuck or failed:** press **Control + C**, check your internet, and run `bash start.sh` again.
-- **Still failing:** take a screenshot of the Terminal window and send it lance.gomos.it@gmail.com
+- **Still failing:** take a screenshot of the Terminal window and send it to lance.gomos.it@gmail.com so I can assist you personally.
