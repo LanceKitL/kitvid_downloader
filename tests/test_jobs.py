@@ -1,5 +1,10 @@
+import asyncio
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
+from app import config
 from app.jobs import Job, JobManager
 
 
@@ -58,6 +63,57 @@ class JobSerializationTests(unittest.TestCase):
         self.assertEqual(data["downloaded_bytes"], 1024)
         self.assertEqual(data["total_bytes"], 4096)
         self.assertTrue(data["total_bytes_is_estimate"])
+
+    def test_to_dict_includes_live_flag(self):
+        job = make_job()
+        job.is_live = True
+
+        self.assertTrue(job.to_dict()["is_live"])
+
+
+class LiveDownloadTimeoutTests(unittest.IsolatedAsyncioTestCase):
+    async def test_live_download_is_not_limited_by_job_timeout(self):
+        class DelayedStream:
+            async def __aiter__(self):
+                await asyncio.sleep(0.02)
+                yield b"PROGRESS:downloading:1:NA:NA:NA:NA\n"
+
+        class EmptyStream:
+            async def __aiter__(self):
+                if False:
+                    yield b""
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            job = make_job(output_dir=temp_dir)
+            job.is_live = True
+            output_dir = Path(temp_dir) / job.id
+            output_dir.mkdir()
+            (output_dir / "live.mp4").write_bytes(b"video")
+
+            process = type(
+                "Process",
+                (),
+                {
+                    "stdout": DelayedStream(),
+                    "stderr": EmptyStream(),
+                    "returncode": 0,
+                    "wait": AsyncMock(return_value=0),
+                },
+            )()
+            manager = JobManager()
+
+            with (
+                patch.object(config, "DOWNLOAD_TIMEOUT_SECONDS", 0.001),
+                patch("app.jobs.build_download_args", return_value=["yt-dlp"]),
+                patch(
+                    "app.jobs.asyncio.create_subprocess_exec",
+                    new=AsyncMock(return_value=process),
+                ),
+            ):
+                await manager._run(job)
+
+            self.assertEqual(job.status, "finished")
+            self.assertEqual(job.filename, "live.mp4")
 
 
 class JobListingTests(unittest.TestCase):

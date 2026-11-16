@@ -27,6 +27,7 @@ class JobRequest(BaseModel):
     format_id: str | None = Field(default=None, max_length=64)
     audio_only: bool = False
     needs_audio: bool = False
+    is_live: bool = False
     title: str | None = Field(default=None, max_length=300)
 
 
@@ -168,6 +169,7 @@ async def create_job(payload: JobRequest) -> dict:
         audio_only=payload.audio_only,
         needs_audio=payload.needs_audio,
         title=payload.title,
+        is_live=payload.is_live,
     )
     return job.to_dict()
 

@@ -641,6 +641,7 @@ async function startItems(items, triggerButton) {
           format_id: item.audioOnly ? null : item.formatId || null,
           needs_audio: !item.audioOnly && item.needsAudio,
           audio_only: item.audioOnly,
+          is_live: item.info.is_live,
           title: item.info.title,
         }),
       });

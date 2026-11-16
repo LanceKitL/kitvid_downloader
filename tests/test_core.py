@@ -182,6 +182,7 @@ class FriendlyErrorTests(unittest.TestCase):
             "ERROR: Unsupported URL: https://example.com": "not supported",
             "ERROR: Private video": "private",
             "ERROR: Sign in to confirm your age": "sign-in",
+            "ERROR: The live event has ended": "live event has ended",
         }
         for raw, expected in cases.items():
             with self.subTest(raw=raw):
@@ -229,6 +230,13 @@ class DownloadArgsTests(unittest.TestCase):
         self.assertIn("-x", args)
         self.assertIn("--audio-format", args)
         self.assertIn("mp3", args)
+
+    def test_live_download_starts_from_beginning(self):
+        args = build_download_args(
+            "https://1.1.1.1/a", Path("/tmp/out"), is_live=True, machine_progress=False
+        )
+
+        self.assertIn("--live-from-start", args)
 
     def test_fast_profile_uses_parallel_fragments_and_retries(self):
         args = build_download_args(

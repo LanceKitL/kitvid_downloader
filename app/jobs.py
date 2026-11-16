@@ -20,6 +20,7 @@ class Job:
     needs_audio: bool
     output_dir: str
     title: str | None = None
+    is_live: bool = False
 
     status: str = "queued"
     stage: str = "Queued"
@@ -50,6 +51,7 @@ class Job:
             "url": self.url,
             "format_id": self.format_id,
             "audio_only": self.audio_only,
+            "is_live": self.is_live,
             "title": self.title,
             "output_dir": self.output_dir,
             "status": self.status,
@@ -93,6 +95,7 @@ class JobManager:
         needs_audio: bool,
         title: str | None,
         output_dir: Path | None = None,
+        is_live: bool = False,
     ) -> Job:
         job_id = uuid.uuid4().hex[:12]
         target = Path(output_dir or config.DOWNLOAD_DIR).expanduser().resolve()
@@ -103,6 +106,7 @@ class JobManager:
             audio_only=audio_only,
             needs_audio=needs_audio,
             output_dir=str(target),
+            is_live=is_live,
             title=title,
         )
         self.jobs[job_id] = job
@@ -197,6 +201,7 @@ class JobManager:
                 format_id=job.format_id,
                 audio_only=job.audio_only,
                 needs_audio=job.needs_audio,
+                is_live=job.is_live,
             )
 
             job.status = "running"
@@ -230,7 +235,8 @@ class JobManager:
             stderr_task = asyncio.create_task(drain_stderr())
 
             try:
-                async with asyncio.timeout(config.DOWNLOAD_TIMEOUT_SECONDS):
+                timeout = None if job.is_live else config.DOWNLOAD_TIMEOUT_SECONDS
+                async with asyncio.timeout(timeout):
                     assert process.stdout is not None
                     async for raw in process.stdout:
                         self._handle_line(job, raw.decode(errors="replace").rstrip())

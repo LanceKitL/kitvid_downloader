@@ -206,6 +206,11 @@ def friendly_error(stderr: str) -> str:
         return "This site is not supported by yt-dlp."
     if "private video" in lowered:
         return "This video is private."
+    if "live event has ended" in lowered:
+        return (
+            "YouTube reports that this live event has ended. It cannot be downloaded "
+            "as a live stream now; if a replay is available, try its replay URL."
+        )
     if any(token in lowered for token in ("sign in", "log in", "login", "cookies")):
         return "This content requires sign-in, and no cookies were provided."
     if "403" in lowered or "forbidden" in lowered:
@@ -272,6 +277,7 @@ def build_download_args(
     audio_only: bool = False,
     needs_audio: bool = False,
     *,
+    is_live: bool = False,
     machine_progress: bool = True,
 ) -> list[str]:
     profile_key = config.normalize_speed_profile(config.SPEED_PROFILE)
@@ -306,6 +312,9 @@ def build_download_args(
 
     if profile["http_chunk_size"]:
         args += ["--http-chunk-size", profile["http_chunk_size"]]
+
+    if is_live:
+        args.append("--live-from-start")
 
     if machine_progress:
         args += [

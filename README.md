@@ -252,6 +252,12 @@ python launcher.py
 4. Repeat for more videos, then click **Download all**, or **Download** on a single card.
 5. Watch progress in the Downloads panel. Finished jobs show **Save file**. Use **Cancel** or **Delete** as needed.
 
+Live streams can be downloaded while they are broadcasting, starting from the beginning
+when the extractor supports it. Live jobs are not subject to the per-job timeout; they
+finish when the stream ends, or you can cancel them from the Downloads panel. An event
+YouTube reports as ended cannot be downloaded as a live stream; use its replay URL if
+the creator has published a replay.
+
 ## Settings
 
 The download location is stored in `settings.json` at the project root (gitignored) and loaded at startup. If that location is unavailable or not writable, the app falls back to the default and explains the problem in the UI.
@@ -280,7 +286,7 @@ The chooser opens on the machine running the server. Because the app is local-on
 | `VD_SETTINGS_FILE` | `./settings.json` | Alternate settings file path (useful for tests). |
 | `VD_FILE_TTL_MINUTES` | `60` | Delete finished or errored job files after this many minutes. `0` disables cleanup. |
 | `VD_MAX_CONCURRENT` | `2` | Maximum simultaneous yt-dlp processes. Extra queue items wait. |
-| `VD_DOWNLOAD_TIMEOUT` | `3600` | Per-job timeout in seconds. |
+| `VD_DOWNLOAD_TIMEOUT` | `3600` | Per-job timeout in seconds for non-live downloads. |
 | `VD_INFO_TIMEOUT` | `60` | Metadata lookup timeout in seconds. |
 | `VD_MAX_FILESIZE` | unset | Passed to `yt-dlp --max-filesize`, for example `2G`. |
 | `VD_ALLOW_PRIVATE_NETWORK` | `0` | Set to `1` to allow URLs that resolve to private or loopback addresses. |
