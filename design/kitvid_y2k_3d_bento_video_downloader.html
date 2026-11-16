@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kitvid✦ — Download Without Limits</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js r128 for Real Interactive 3D Models -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Tone.js for Tactile Y2K Clay-Pop Synth SFX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- Google Fonts: Fredoka (Inflated Bubble), Silkscreen (Pixel Display), Caveat (Handwritten Doodles), Plus Jakarta Sans (Clean UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sky-top: #54B3F3;
+      --sky-mid: #9ED7FA;
+      --lavender-bot: #D7CBFA;
+      --acid-lime: #D4FF2A;
+      --bubble-pink: #FF69C6;
+      --ink-black: #111318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-black);
+      background: linear-gradient(180deg, #47A9F0 0%, #86CCF8 32%, #C9D8FC 68%, #DFD5FC 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* Soft Fluffy Y2K Cloud Blooms */
+    .cloud-bloom {
+      position: fixed;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(22px);
+    }
+
+    /* Typography Families */
+    .font-bubble {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .font-pixel {
+      font-family: 'Silkscreen', monospace;
+    }
+    .font-doodle {
+      font-family: 'Caveat', cursive;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Inflated 3D Balloon Typography (Pink, Chrome Silver, Acid Lime) */
+    .balloon-word {
+      display: inline-block;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      position: relative;
+      user-select: none;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .balloon-word:hover {
+      transform: scale(1.03) rotate(-1deg);
+    }
+
+    .balloon-pink {
+      background: linear-gradient(180deg, #FFB8E6 0%, #FF69C6 48%, #D92694 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 2.5px #8A115B;
+      filter:
+        drop-shadow(0 4px 0 #8A115B)
+        drop-shadow(0 10px 18px rgba(217, 38, 148, 0.35));
+    }
+
+    .balloon-chrome {
+      background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 38%, #64748B 54%, #F8FAFC 82%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 2.5px #334155;
+      filter:
+        drop-shadow(0 4px 0 #334155)
+        drop-shadow(0 10px 18px rgba(51, 65, 85, 0.28));
+    }
+
+    .balloon-lime {
+      background: linear-gradient(180deg, #F3FF9E 0%, #D4FF2A 50%, #86B800 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 2.5px #3D5700;
+      filter:
+        drop-shadow(0 4px 0 #3D5700)
+        drop-shadow(0 10px 18px rgba(134, 184, 0, 0.35));
+    }
+
+    /* Clay-Pop Pill & Neo-Brutalist Buttons */
+    .btn-lime-pill {
+      background-color: #D4FF2A;
+      color: #111318;
+      border: 2px solid #111318;
+      box-shadow: 0 4px 0 #111318, 0 8px 20px rgba(212, 255, 42, 0.45);
+      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease, background-color 0.15s ease;
+    }
+    .btn-lime-pill:hover {
+      background-color: #E0FF5C;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #111318, 0 12px 24px rgba(212, 255, 42, 0.55);
+    }
+    .btn-lime-pill:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #111318;
+    }
+
+    .btn-dark-pill {
+      background-color: #111318;
+      color: #FFFFFF;
+      border: 2px solid #111318;
+      box-shadow: 0 4px 0 #475569;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .btn-dark-pill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #475569;
+    }
+    .btn-dark-pill:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #475569;
+    }
+
+    /* Frosted Glass Bento Cards (Matching Reference 4-Card Row) */
+    .frosted-bento {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.66) 100%);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 2px solid rgba(255, 255, 255, 0.92);
+      box-shadow:
+        0 14px 32px rgba(59, 91, 152, 0.12),
+        inset 0 2px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+    }
+    .frosted-bento:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 20px 40px rgba(59, 91, 152, 0.18),
+        inset 0 2px 0 rgba(255, 255, 255, 1);
+    }
+
+    /* Clay-Pop 3D Icon Badges inside Bento Cards */
+    .clay-icon-purple {
+      background: linear-gradient(145deg, #A78BFA 0%, #7C3AED 100%);
+      box-shadow: 0 6px 14px rgba(124, 58, 237, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.65);
+    }
+    .clay-icon-pink {
+      background: linear-gradient(145deg, #FF8AD4 0%, #EC4899 100%);
+      box-shadow: 0 6px 14px rgba(236, 72, 153, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.65);
+    }
+    .clay-icon-blue {
+      background: linear-gradient(145deg, #60A5FA 0%, #2563EB 100%);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.65);
+    }
+    .clay-icon-magenta {
+      background: linear-gradient(145deg, #E879F9 0%, #A21CAF 100%);
+      box-shadow: 0 6px 14px rgba(162, 28, 175, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.65);
+    }
+
+    /* Tactile Toggle Switch */
+    .clay-switch {
+      background: #CBD5E1;
+      border: 2px solid #111318;
+      transition: background-color 0.2s ease;
+    }
+    .clay-switch.is-active {
+      background: #D4FF2A;
+    }
+    .clay-switch-thumb {
+      background: #FFFFFF;
+      border: 2px solid #111318;
+      box-shadow: 0 2px 0 #111318;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Acid Lime Highlight Banner */
+    .lime-banner-card {
+      background: linear-gradient(125deg, #D4FF2A 0%, #C6F716 55%, #A78BFA 100%);
+      border: 2px solid #111318;
+      box-shadow: 0 16px 36px rgba(17, 19, 24, 0.14);
+    }
+
+    /* Striped Candy Progress Bar */
+    @keyframes candyMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 24px 0; }
+    }
+    .candy-progress {
+      background-color: #FF69C6;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.4) 6px,
+        transparent 6px,
+        transparent 12px
+      );
+      background-size: 24px 24px;
+      animation: candyMove 0.65s linear infinite;
+      transition: width 0.25s ease-out;
+    }
+    .candy-progress-done {
+      background: linear-gradient(90deg, #D4FF2A 0%, #34D399 100%);
+    }
+
+    /* Interactive 3D Canvas Cursors */
+    .canvas-3d-stage {
+      cursor: grab;
+      touch-action: pan-y;
+    }
+    .canvas-3d-stage:active {
+      cursor: grabbing;
+    }
+
+    /* Toast Pop */
+    @keyframes popToast {
+      0% { opacity: 0; transform: translateY(16px) scale(0.92); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .toast-pop {
+      animation: popToast 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+  </style>
+</head>
+<body class="relative selection:bg-[#D4FF2A] selection:text-[#111318]">
+
+  <!-- Fluffy Sky Cloud Blooms -->
+  <div class="cloud-bloom w-96 h-56 -top-10 left-10"></div>
+  <div class="cloud-bloom w-[32rem] h-64 top-24 right-4"></div>
+  <div class="cloud-bloom w-[28rem] h-60 top-[34rem] -left-16"></div>
+  <div class="cloud-bloom w-[30rem] h-64 bottom-20 right-10"></div>
+
+  <!-- Top Navigation Bar (Matching "designobe" Header Layout) -->
+  <header class="relative z-30 max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-3 flex items-center justify-between gap-4">
+    <!-- Brand Wordmark with 4-Point Sparkle -->
+    <a href="#" onclick="playPopSound('chime'); return false;" class="flex items-center gap-1 group">
+      <span class="font-bubble text-2xl sm:text-3xl font-bold tracking-tight text-[#111318] group-hover:scale-105 transition-transform">
+        kitvid
+      </span>
+      <svg class="w-5 h-5 text-[#111318] -mt-3 group-hover:rotate-45 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 1L14.8 9.2L23 12L14.8 14.8L12 23L9.2 14.8L1 12L9.2 9.2L12 1Z"/>
+      </svg>
+    </a>
+
+    <!-- Center Nav Links -->
+    <nav class="hidden md:flex items-center gap-7 text-sm font-bold text-[#111318]/85">
+      <a href="#downloader-dock" class="hover:text-[#111318] transition">Downloader</a>
+      <a href="#bento-controls" class="hover:text-[#111318] transition">Preferences</a>
+      <a href="#cassette-banner" class="hover:text-[#111318] transition">Playback 3D</a>
+      <a href="#devices-section" class="hover:text-[#111318] transition">Platforms</a>
+    </nav>
+
+    <!-- Right Controls: Sound Toggle + Lime CTA Pill -->
+    <div class="flex items-center gap-2.5 sm:gap-3">
+      <button type="button" id="sfxBtn" onclick="toggleSfx()" title="Toggle Y2K Synth Sound Effects"
+        class="w-10 h-10 rounded-full bg-white/80 hover:bg-white border-2 border-[#111318] flex items-center justify-center text-base shadow-[0_3px_0_#111318] active:translate-y-0.5 cursor-pointer transition">
+        <span id="sfxIcon">🔊</span>
+      </button>
+
+      <button type="button" onclick="focusUrlInput()"
+        class="btn-lime-pill rounded-full px-5 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer">
+        <span>Grab Video</span>
+        <span>→</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 pt-2 pb-16 space-y-8">
+
+    <!-- ========================================================= -->
+    <!-- 1. HERO SECTION: Inflated 3D Bubble Typography + 3D Mac   -->
+    <!-- ========================================================= -->
+    <section class="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center pt-2 pb-2">
+
+      <!-- Left Column: Bubble Headline, Subtitle, URL Input Dock & Live Queue -->
+      <div class="lg:col-span-6 space-y-5 z-20">
+        <!-- Inflated 3D Bubble Headline -->
+        <h1 class="font-bubble text-5xl sm:text-6xl xl:text-[4.25rem] font-bold uppercase tracking-tight">
+          <span class="balloon-word balloon-pink block">DOWNLOAD</span>
+          <span class="balloon-word balloon-chrome block -mt-1">WITHOUT</span>
+          <span class="balloon-word balloon-lime block -mt-1">LIMITS</span>
+        </h1>
+
+        <p class="text-base sm:text-lg font-bold text-[#111318]/90 max-w-md leading-snug">
+          A hyper-tactile local video ripper for a brighter, faster offline library.
+        </p>
+
+        <!-- Sleek Floating URL Input Dock (Core KitVid Downloader) -->
+        <div id="downloader-dock" class="bg-white/92 backdrop-blur-xl rounded-3xl p-3.5 sm:p-4 border-2 border-[#111318] shadow-[0_10px_0_#111318,0_20px_35px_rgba(17,19,24,0.16)] space-y-3">
+          <form id="downloadForm" class="space-y-3">
+            <!-- Input Row -->
+            <div class="flex items-center gap-2 bg-[#F1F5F9] rounded-2xl px-3.5 py-2.5 border-2 border-[#111318]/15 focus-within:border-[#111318] transition">
+              <span class="text-lg select-none">🔗</span>
+              <input
+                id="videoUrlInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Paste a video link, e.g. https://..."
+                class="w-full bg-transparent text-sm font-semibold text-[#111318] placeholder-slate-400 focus:outline-none"
+              />
+              <button type="button" id="clearInputBtn" onclick="clearUrlInput()"
+                class="hidden text-xs font-extrabold text-slate-400 hover:text-rose-500 px-1.5 cursor-pointer">
+                ✕
+              </button>
+              <button type="button" onclick="pasteLinkFromClipboard()"
+                class="shrink-0 text-xs font-extrabold px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-[#111318]/25 text-[#111318] shadow-sm cursor-pointer transition">
+                Paste
+              </button>
+            </div>
+
+            <!-- Format Selector + Primary Lime Action Button -->
+            <div class="flex flex-wrap items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2">
+                <select id="formatSelect" onchange="playPopSound('tick')"
+                  class="bg-[#F8FAFC] border-2 border-[#111318] rounded-full px-3.5 py-2 text-xs font-extrabold text-[#111318] focus:outline-none cursor-pointer">
+                  <option value="4K Ultra MP4">✨ 4K Ultra MP4</option>
+                  <option value="1080p HD MP4" selected>🎬 1080p HD MP4</option>
+                  <option value="720p Fast MP4">⚡ 720p Fast MP4</option>
+                  <option value="320kbps MP3">🎵 320kbps MP3</option>
+                </select>
+
+                <!-- Quick Sample Pills -->
+                <button type="button" onclick="loadSamplePreset('synthwave')"
+                  class="hidden sm:inline-flex items-center gap-1 text-[11px] font-extrabold px-3 py-2 rounded-full bg-[#FF69C6]/20 hover:bg-[#FF69C6]/35 text-[#8A115B] border border-[#FF69C6]/50 cursor-pointer transition">
+                  + 4K Synthwave Mix
+                </button>
+              </div>
+
+              <button type="submit"
+                class="btn-lime-pill rounded-full px-5 py-2.5 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer ml-auto">
+                <span>Add Video</span>
+                <span>→</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- More Quick Preset Pills Row -->
+          <div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-200/80">
+            <span class="text-[11px] font-bold text-slate-500 mr-1">Try presets:</span>
+            <button type="button" onclick="loadSamplePreset('synthwave')"
+              class="sm:hidden text-[11px] font-bold px-2.5 py-1 rounded-full bg-pink-100 text-pink-800 hover:bg-pink-200 cursor-pointer">
+              + 4K Synthwave
+            </button>
+            <button type="button" onclick="loadSamplePreset('skate')"
+              class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 cursor-pointer transition">
+              + Retro Skate VHS
+            </button>
+            <button type="button" onclick="loadSamplePreset('lofi')"
+              class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 hover:bg-sky-200 cursor-pointer transition">
+              + Lo-Fi Beats
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Download Queue Drawer (Expands smoothly when videos are added) -->
+        <div id="queueDrawer" class="hidden bg-white/95 backdrop-blur-xl rounded-3xl p-4 border-2 border-[#111318] shadow-[0_8px_0_#111318] space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#FF69C6] animate-ping"></span>
+              <span class="font-extrabold text-xs uppercase tracking-wider text-[#111318]">
+                Active Downloads (<span id="activeQueueCount">0</span>)
+              </span>
+            </div>
+            <button type="button" onclick="clearCompletedDownloads()"
+              class="text-xs font-extrabold text-purple-700 hover:text-pink-600 cursor-pointer">
+              Clear finished
+            </button>
+          </div>
+
+          <div id="downloadItemsContainer" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+        </div>
+
+        <!-- Social Proof & Handwritten Doodle Row (Matching Reference Hero Bottom-Left) -->
+        <div class="flex flex-wrap items-center gap-4 pt-1">
+          <div class="flex items-center gap-2.5">
+            <div class="flex -space-x-2.5">
+              <div class="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-xs shadow">😎</div>
+              <div class="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-amber-300 to-orange-500 flex items-center justify-center text-xs shadow">🎧</div>
+              <div class="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xs shadow">🚀</div>
+            </div>
+            <div class="text-xs font-bold text-[#111318]/85 leading-tight">
+              Runs locally on your computer<br/>
+              <span class="text-[#111318]/60 font-semibold">Zero cloud tracking • yt-dlp powered</span>
+            </div>
+          </div>
+
+          <div class="font-doodle text-lg font-bold text-[#111318] -rotate-6 leading-none select-none">
+            MORE VIDEOS<br/>LESS BUFFERING ✦
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Three.js 3D Retro Macintosh CRT + Slime + Iridescent CD-ROM -->
+      <div class="lg:col-span-6 relative h-[390px] sm:h-[460px] flex items-center justify-center">
+        <!-- Handwritten Top-Right Doodle Annotation -->
+        <div class="font-doodle text-xl sm:text-2xl font-bold text-white drop-shadow-[0_2px_4px_rgba(17,19,24,0.35)] rotate-6 absolute top-1 right-2 sm:right-4 z-20 text-center leading-none pointer-events-none select-none">
+          GOOD VIBES<br/>BRIGHTER DAYS :)
+        </div>
+
+        <!-- Yellow Sticky-Note Badge Overlapping 3D Mac -->
+        <div onclick="cycleSmileyExpression()" title="Click to cycle Mac face!"
+          class="cursor-pointer select-none absolute top-24 right-2 sm:right-6 z-20 bg-[#E6FF4B] border-2 border-[#111318] px-3 py-2.5 shadow-[4px_4px_0_#111318] rotate-6 hover:rotate-3 hover:scale-105 transition-transform">
+          <div class="font-doodle text-base sm:text-lg font-bold text-[#111318] leading-none text-center">
+            FAST<br/>DOWNLOADS<br/>ALWAYS WIN
+          </div>
+        </div>
+
+        <!-- Interactive 3D WebGL Canvas for Retro Lavender Macintosh -->
+        <canvas id="heroMacCanvas" class="canvas-3d-stage w-full h-full relative z-10"></canvas>
+
+        <!-- Bottom Floating Interaction Hint Pill -->
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 bg-white/85 backdrop-blur-md border border-[#111318]/20 rounded-full px-3.5 py-1 text-[11px] font-bold text-[#111318]/80 shadow-sm pointer-events-none whitespace-nowrap">
+          🖱️ Drag to spin 3D Mac • CD &amp; Slime react to downloads
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 2. 4-CARD FROSTED GLASS BENTO ROW (Functional Controls)   -->
+    <!-- ========================================================= -->
+    <section id="bento-controls" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+
+      <!-- Card 1: Save Folder Selector -->
+      <div class="frosted-bento rounded-3xl p-5 flex flex-col justify-between gap-3">
+        <div>
+          <div class="w-12 h-12 rounded-2xl clay-icon-purple flex items-center justify-center text-white mb-3.5">
+            <!-- 3D Clay Folder SVG -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-extrabold text-[#111318] leading-tight">Save Folder</h3>
+          <p class="text-xs font-semibold text-slate-600 mt-1">Where your local video files land:</p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="bg-[#ECFDF5] border border-emerald-400/60 rounded-xl px-2.5 py-1.5 flex items-center gap-1.5">
+            <input id="savePathInput" type="text" readonly
+              value="C:\Users\lance\kitvid_downloader\downloads"
+              class="w-full bg-transparent font-mono-code text-[11px] font-bold text-emerald-900 focus:outline-none truncate" />
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="cycleSaveFolder()"
+              class="flex-1 text-[11px] font-extrabold py-1.5 px-2.5 rounded-xl bg-[#111318] text-white hover:bg-slate-800 cursor-pointer transition">
+              Change
+            </button>
+            <button type="button" onclick="resetSaveFolder()"
+              class="text-[11px] font-extrabold py-1.5 px-2.5 rounded-xl bg-white border border-slate-300 text-[#111318] hover:bg-slate-100 cursor-pointer transition">
+              Reset
+            </button>
+            <button type="button" onclick="toggleEditFolder()" title="Type custom path"
+              class="text-[11px] font-extrabold py-1.5 px-2 rounded-xl bg-white border border-slate-300 text-[#111318] hover:bg-slate-100 cursor-pointer transition">
+              ✎
+            </button>
+          </div>
+          <div id="customPathRow" class="hidden flex items-center gap-1 pt-1">
+            <input id="manualFolderField" type="text" placeholder="D:\Videos\KitVid"
+              class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 font-mono-code text-[11px] focus:outline-none" />
+            <button type="button" onclick="applyManualFolder()"
+              class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-[#D4FF2A] border border-[#111318] cursor-pointer">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Turbo Engine & Bandwidth Limiter -->
+      <div class="frosted-bento rounded-3xl p-5 flex flex-col justify-between gap-3">
+        <div>
+          <div class="w-12 h-12 rounded-2xl clay-icon-pink flex items-center justify-center text-white mb-3.5">
+            <!-- 3D Clay Lightning SVG -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-extrabold text-[#111318] leading-tight">Turbo Engine</h3>
+          <p id="fragmentStatusText" class="text-xs font-semibold text-slate-600 mt-1">
+            Max speed: <span class="font-extrabold text-pink-600">32 parallel fragments</span> active.
+          </p>
+        </div>
+
+        <div class="bg-white/80 rounded-2xl p-2.5 border border-slate-200/90 flex items-center justify-between gap-2">
+          <div>
+            <div class="text-xs font-extrabold text-[#111318]">Keep internet usable</div>
+            <div class="text-[10px] font-semibold text-slate-500">Smooth calls &amp; browsing</div>
+          </div>
+
+          <button type="button" id="bandwidthToggle" role="switch" aria-checked="false" onclick="toggleBandwidthLimiter()"
+            class="clay-switch w-12 h-7 rounded-full p-0.5 flex items-center cursor-pointer shrink-0">
+            <span id="bandwidthThumb" class="clay-switch-thumb w-5 h-5 rounded-full block transform translate-x-0"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3: Downloader Backend Switcher -->
+      <div class="frosted-bento rounded-3xl p-5 flex flex-col justify-between gap-3">
+        <div>
+          <div class="w-12 h-12 rounded-2xl clay-icon-blue flex items-center justify-center text-white mb-3.5">
+            <!-- 3D Clay Cloud SVG -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-extrabold text-[#111318] leading-tight">Stream Core</h3>
+          <p class="text-xs font-semibold text-slate-600 mt-1">Switch local extraction engine:</p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-xl">
+            <button type="button" onclick="selectEngineCore('Native', this)"
+              class="engine-pill text-[11px] font-extrabold py-1.5 rounded-lg bg-white text-[#111318] shadow-sm cursor-pointer transition">
+              Native
+            </button>
+            <button type="button" onclick="selectEngineCore('Aria2c', this)"
+              class="engine-pill text-[11px] font-extrabold py-1.5 rounded-lg text-slate-600 hover:text-[#111318] cursor-pointer transition">
+              Aria2c
+            </button>
+            <button type="button" onclick="selectEngineCore('yt-dlp', this)"
+              class="engine-pill text-[11px] font-extrabold py-1.5 rounded-lg text-slate-600 hover:text-[#111318] cursor-pointer transition">
+              yt-dlp
+            </button>
+          </div>
+          <div id="engineModeNote" class="text-[11px] font-bold text-blue-700 text-center">
+            Chunked HTTP + Auto-Merge
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Download History & Stats Counter -->
+      <div class="frosted-bento rounded-3xl p-5 flex flex-col justify-between gap-3">
+        <div>
+          <div class="w-12 h-12 rounded-2xl clay-icon-magenta flex items-center justify-center text-white mb-3.5">
+            <!-- 3D Clay Sparkle/Stats SVG -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-extrabold text-[#111318] leading-tight">Session Vault</h3>
+          <p class="text-xs font-semibold text-slate-600 mt-1">Files auto-clean after 60 mins.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div class="bg-white/85 rounded-2xl p-2.5 border border-slate-200 text-center">
+            <div id="statFilesCount" class="font-bubble text-2xl font-bold text-[#111318] leading-none">0</div>
+            <div class="text-[10px] font-extrabold uppercase text-slate-500 mt-1">Saved</div>
+          </div>
+          <div class="bg-white/85 rounded-2xl p-2.5 border border-slate-200 text-center">
+            <div id="statDataSaved" class="font-bubble text-2xl font-bold text-purple-700 leading-none">0<span class="text-xs">MB</span></div>
+            <div class="text-[10px] font-extrabold uppercase text-slate-500 mt-1">Volume</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 3. ACID-LIME HIGHLIGHT BANNER + 3D CASSETTE TAPE          -->
+    <!-- ========================================================= -->
+    <section id="cassette-banner" class="lime-banner-card rounded-[2rem] p-6 sm:p-8 relative overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+        <!-- Left Pixel Display Text & CTA -->
+        <div class="lg:col-span-6 space-y-4 z-10">
+          <span class="inline-block bg-[#111318] text-white text-[11px] font-extrabold uppercase tracking-wider px-3.5 py-1 rounded-full">
+            NEW FEATURE
+          </span>
+
+          <h2 class="font-pixel text-2xl sm:text-4xl font-bold text-[#111318] leading-tight tracking-tight">
+            TURN LINKS INTO<br/>LOCAL FILES <span class="inline-block">☆</span>
+          </h2>
+
+          <p class="text-sm sm:text-base font-bold text-[#111318]/85 max-w-md">
+            With multi-threaded fragments, instant MP3 audio extraction, and 4K MKV muxing — anything you watch is yours to keep.
+          </p>
+
+          <div class="pt-1 flex flex-wrap items-center gap-3">
+            <button type="button" onclick="loadSamplePreset('synthwave')"
+              class="btn-dark-pill rounded-full px-6 py-3 text-xs sm:text-sm font-extrabold flex items-center gap-2 cursor-pointer">
+              <span>Test 4K Rip Now</span>
+              <span>→</span>
+            </button>
+            <span id="cassetteRpmStatus" class="font-mono-code text-xs font-bold text-[#111318]/80 bg-white/50 px-3 py-1.5 rounded-full border border-[#111318]/20">
+              REELS: STANDBY
+            </span>
+          </div>
+        </div>
+
+        <!-- Right Interactive 3D Translucent Purple/Pink Cassette Tape + Tool Palette Pill -->
+        <div class="lg:col-span-6 relative h-[250px] sm:h-[280px] flex items-center justify-center">
+          <canvas id="cassetteCanvas" class="canvas-3d-stage w-full h-full relative z-10"></canvas>
+
+          <!-- Handwritten Doodle Note -->
+          <div class="font-doodle text-lg sm:text-xl font-bold text-[#111318] -rotate-6 absolute bottom-2 right-14 z-20 text-center leading-none pointer-events-none select-none">
+            PRESS PLAY<br/>ON YOUR<br/>VIDEOS :)
+          </div>
+
+          <!-- Floating Mini Tool Palette Pill on the Right (Matching Reference) -->
+          <div class="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 bg-white/95 border-2 border-[#111318] rounded-2xl p-1.5 flex flex-col gap-2 shadow-[4px_4px_0_#111318]">
+            <button type="button" onclick="spinCassetteBoost()" title="Boost Tape Reels"
+              class="w-8 h-8 rounded-xl hover:bg-[#D4FF2A] flex items-center justify-center text-sm font-bold cursor-pointer transition">
+              ↖
+            </button>
+            <button type="button" onclick="loadSamplePreset('lofi')" title="Rip Audio Track"
+              class="w-8 h-8 rounded-xl hover:bg-[#D4FF2A] flex items-center justify-center text-xs font-serif font-extrabold cursor-pointer transition">
+              T
+            </button>
+            <button type="button" onclick="cycleCassetteTint()" title="Switch Cassette Shell Color"
+              class="w-8 h-8 rounded-xl hover:bg-[#D4FF2A] flex items-center justify-center text-sm cursor-pointer transition">
+              ○
+            </button>
+            <button type="button" onclick="focusUrlInput()" title="Paste Video URL"
+              class="w-8 h-8 rounded-xl hover:bg-[#D4FF2A] flex items-center justify-center text-sm cursor-pointer transition">
+              🖼
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 4. BOTTOM BENTO ROW: Watch Anywhere (3D Phone) + Crew CTA -->
+    <!-- ========================================================= -->
+    <section id="devices-section" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- Left Light-Lavender Card ("WATCH ANYWHERE" with Tilted 3D Smartphone) -->
+      <div class="lg:col-span-7 rounded-[2rem] bg-gradient-to-br from-[#EDE9FE] via-[#E0E7FF] to-[#C7D2FE] border-2 border-white p-6 sm:p-7 relative overflow-hidden shadow-[0_14px_32px_rgba(59,91,152,0.12)] grid grid-cols-1 sm:grid-cols-12 items-center gap-4">
+        <div class="sm:col-span-6 space-y-3 z-10">
+          <h3 class="font-pixel text-xl sm:text-2xl font-bold text-[#111318] leading-snug">
+            WATCH<br/>ANYWHERE
+          </h3>
+          <p class="text-xs sm:text-sm font-bold text-slate-700">
+            On desktop, tablet or mobile. Your offline videos, no limits.
+          </p>
+
+          <!-- OS Badges (Apple, Windows, Android, Web) -->
+          <div class="flex items-center gap-2.5 pt-2">
+            <span class="w-9 h-9 rounded-xl bg-white/90 border border-slate-300 flex items-center justify-center text-sm font-bold shadow-sm" title="macOS"></span>
+            <span class="w-9 h-9 rounded-xl bg-white/90 border border-slate-300 flex items-center justify-center text-sm font-bold shadow-sm" title="Windows">⊞</span>
+            <span class="w-9 h-9 rounded-xl bg-white/90 border border-slate-300 flex items-center justify-center text-sm font-bold shadow-sm" title="Android">🤖</span>
+            <span class="w-9 h-9 rounded-xl bg-white/90 border border-slate-300 flex items-center justify-center text-sm font-bold shadow-sm" title="Web">🌐</span>
+          </div>
+        </div>
+
+        <!-- Interactive 3D Smartphone Canvas -->
+        <div class="sm:col-span-6 h-52 sm:h-56 relative">
+          <canvas id="phoneCanvas" class="canvas-3d-stage w-full h-full"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Dark Charcoal Card ("JOIN THE KITVID CREW") -->
+      <div class="lg:col-span-5 rounded-[2rem] bg-[#16181D] text-white border-2 border-[#111318] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden shadow-[0_14px_32px_rgba(17,19,24,0.22)]">
+        <div class="space-y-4">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="font-pixel text-lg sm:text-xl font-bold leading-snug text-white">
+              JOIN THE<br/>KITVID CREW
+            </h3>
+            <div class="font-doodle text-lg font-bold text-[#D4FF2A] -rotate-6 text-right leading-none select-none">
+              LOCAL<br/>TOOLS<br/>BRIGHTER DAYS 👑
+            </div>
+          </div>
+
+          <!-- Creator Avatars Row -->
+          <div class="flex items-center -space-x-2">
+            <div class="w-10 h-10 rounded-full border-2 border-[#16181D] bg-gradient-to-tr from-pink-500 to-amber-400 flex items-center justify-center text-sm">👾</div>
+            <div class="w-10 h-10 rounded-full border-2 border-[#16181D] bg-gradient-to-tr from-cyan-400 to-indigo-500 flex items-center justify-center text-sm">💿</div>
+            <div class="w-10 h-10 rounded-full border-2 border-[#16181D] bg-gradient-to-tr from-lime-400 to-emerald-500 flex items-center justify-center text-sm">⚡</div>
+            <div class="w-10 h-10 rounded-full border-2 border-[#16181D] bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-sm">🎬</div>
+          </div>
+
+          <p class="text-xs sm:text-sm font-semibold text-slate-300 leading-relaxed">
+            Share presets, grab 4K archival streams, and keep your favorite videos safe forever.
+          </p>
+        </div>
+
+        <div class="pt-5">
+          <button type="button" onclick="batchDownloadAllPresets()"
+            class="btn-lime-pill rounded-full px-6 py-2.5 text-xs sm:text-sm font-extrabold inline-flex items-center gap-2 cursor-pointer">
+            <span>Batch Rip Demo Pack</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Minimal Clean Footer (Matching Reference Bottom Bar) -->
+  <footer class="relative z-20 bg-white/85 backdrop-blur-md border-t border-white mt-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-1">
+          <span class="font-bubble text-xl font-bold text-[#111318]">kitvid</span>
+          <span class="text-xs">✦</span>
+        </div>
+        <p class="text-[11px] font-semibold text-slate-500">Create a brighter offline media library.</p>
+      </div>
+
+      <div class="flex items-center gap-6 text-xs font-bold text-slate-600">
+        <a href="#downloader-dock" class="hover:text-[#111318]">Downloader</a>
+        <a href="#bento-controls" class="hover:text-[#111318]">Preferences</a>
+        <a href="#cassette-banner" class="hover:text-[#111318]">Playback</a>
+        <a href="#devices-section" class="hover:text-[#111318]">Devices</a>
+      </div>
+
+      <div class="flex items-center gap-3 text-sm font-bold text-[#111318]">
+        <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">📷</span>
+        <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">🎵</span>
+        <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">▶️</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Stack -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
+
+  <script>
+    /**
+     * KITVID Y2K 3D BENTO & CLAY-POP VIDEO DOWNLOADER
+     * Includes:
+     * 1. Three.js Hero 3D Retro Lavender Macintosh CRT with Dynamic Canvas Pixel Smiley Face
+     *    (Reacts with Happy Blink, Starry Eyes while downloading, and Cool Sunglasses when finished!),
+     *    Glossy Pink Slime Ribbon Swirl, Spinning Iridescent CD-ROM, 3D Lightning Bolt, Musical Note, & Pixel Cursor.
+     * 2. Three.js Banner 3D Translucent Purple/Pink Cassette Tape ("PLAYBACK") with spinning reels.
+     * 3. Three.js Bottom Bento Tilted 3D Smartphone showing the glowing smiley face screen.
+     * 4. Full KitVid Video Downloader Engine + Tone.js Clay-Pop Synth SFX.
+     */
+
+    const state = {
+      sfxEnabled: true,
+      bandwidthLimited: false,
+      engineName: 'Native',
+      defaultFolder: 'C:\\Users\\lance\\kitvid_downloader\\downloads',
+      folderPresets: [
+        'C:\\Users\\lance\\kitvid_downloader\\downloads',
+        'D:\\Media\\KitVid_4K_Vault',
+        'C:\\Users\\lance\\Videos\\Offline_Clips',
+        'E:\\USB_Drive\\Mixtapes'
+      ],
+      folderIdx: 0,
+      jobs: [],
+      totalSavedFiles: 0,
+      totalSavedMb: 0,
+      macMood: 'happy', // 'happy' | 'downloading' | 'sunglasses'
+      cassetteBoost: 0,
+      cassetteShellIndex: 0
+    };
+
+    const presets = {
+      synthwave: {
+        url: 'https://www.youtube.com/watch?v=4k_synthwave_sunset_mix',
+        title: '4K Synthwave Sunset Drive Mix [60FPS]',
+        sizeMb: 428.5,
+        duration: '42:18'
+      },
+      skate: {
+        url: 'https://vimeo.com/90210/retro_skate_vhs_1999',
+        title: 'Retro Skate VHS Tape — Tokyo 1999',
+        sizeMb: 186.2,
+        duration: '14:05'
+      },
+      lofi: {
+        url: 'https://soundcloud.com/lofi_girl/midnight_study_beats',
+        title: 'Lo-Fi Beats to Rip Videos To (HQ)',
+        sizeMb: 64.0,
+        duration: '28:50'
+      }
+    };
+
+    // =========================================================================
+    // TONE.JS CLAY-POP SYNTH SOUND EFFECTS
+    // =========================================================================
+    let popSynth = null;
+    async function playPopSound(type = 'pop') {
+      if (!state.sfxEnabled || typeof Tone === 'undefined') return;
+      try {
+        if (Tone.context.state !== 'running') {
+          await Tone.start();
+        }
+        if (!popSynth) {
+          popSynth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.005, decay: 0.11, sustain: 0.02, release: 0.18 }
+          }).toDestination();
+          popSynth.volume.value = -10;
+        }
+        const now = Tone.now();
+        if (type === 'pop') {
+          popSynth.triggerAttackRelease('C5', '32n', now);
+        } else if (type === 'tick') {
+          popSynth.triggerAttackRelease('G5', '64n', now);
+        } else if (type === 'add') {
+          popSynth.triggerAttackRelease('E5', '32n', now);
+          popSynth.triggerAttackRelease('B5', '16n', now + 0.06);
+        } else if (type === 'chime') {
+          popSynth.triggerAttackRelease('C5', '16n', now);
+          popSynth.triggerAttackRelease('E5', '16n', now + 0.07);
+          popSynth.triggerAttackRelease('G5', '16n', now + 0.14);
+          popSynth.triggerAttackRelease('C6', '8n', now + 0.21);
+        }
+      } catch (e) {
+        // Ignore audio block before user gesture
+      }
+    }
+
+    function toggleSfx() {
+      state.sfxEnabled = !state.sfxEnabled;
+      document.getElementById('sfxIcon').textContent = state.sfxEnabled ? '🔊' : '🔇';
+      if (state.sfxEnabled) playPopSound('pop');
+    }
+
+    function showToast(message, emoji = '✦') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = 'toast-pop pointer-events-auto bg-white border-2 border-[#111318] rounded-2xl px-4 py-2.5 shadow-[4px_4px_0_#111318] flex items-center gap-2.5 text-xs font-extrabold text-[#111318]';
+      el.innerHTML = `<span class="text-base">${emoji}</span><span class="flex-1">${message}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        el.style.transition = 'all 0.2s ease';
+        setTimeout(() => el.remove(), 220);
+      }, 2500);
+    }
+
+    // =========================================================================
+    // DYNAMIC PIXEL SMILEY CANVAS TEXTURE (Used on 3D Mac & 3D Smartphone)
+    // =========================================================================
+    let crtTexture, crtCanvas, crtCtx;
+    let blinkTimer = 0;
+    let isBlinking = false;
+
+    function initCrtScreenTexture() {
+      crtCanvas = document.createElement('canvas');
+      crtCanvas.width = 256;
+      crtCanvas.height = 224;
+      crtCtx = crtCanvas.getContext('2d');
+      crtTexture = new THREE.CanvasTexture(crtCanvas);
+      crtTexture.magFilter = THREE.NearestFilter;
+      crtTexture.minFilter = THREE.NearestFilter;
+      drawCrtFace('happy', false);
+    }
+
+    function drawCrtFace(mood, blink) {
+      if (!crtCtx) return;
+      const ctx = crtCtx;
+      // Dark CRT Phosphor Background
+      ctx.fillStyle = '#181A20';
+      ctx.fillRect(0, 0, 256, 224);
+
+      // Subtle CRT scanlines
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+      for (let y = 0; y < 224; y += 6) {
+        ctx.fillRect(0, y, 256, 2);
+      }
+
+      ctx.fillStyle = '#D4FF2A'; // Acid-Lime Pixel Phosphor
+
+      if (mood === 'downloading') {
+        // Excited Star Eyes + Big Open Happy Mouth!
+        drawPixelStar(ctx, 84, 78, 18);
+        drawPixelStar(ctx, 168, 78, 18);
+
+        // Open D-mouth
+        ctx.fillRect(92, 134, 72, 12);
+        ctx.fillRect(98, 146, 60, 14);
+        ctx.fillRect(108, 160, 40, 10);
+      } else if (mood === 'sunglasses') {
+        // Cool Pixel Sunglasses + Confident Smirk
+        ctx.fillStyle = '#FF69C6';
+        ctx.fillRect(54, 62, 62, 28);
+        ctx.fillRect(140, 62, 62, 28);
+        ctx.fillRect(116, 68, 24, 8);
+        // Glossy white highlight on shades
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(62, 66, 16, 6);
+        ctx.fillRect(148, 66, 16, 6);
+
+        // Lime Smile
+        ctx.fillStyle = '#D4FF2A';
+        ctx.fillRect(92, 136, 12, 12);
+        ctx.fillRect(104, 148, 52, 12);
+        ctx.fillRect(156, 136, 12, 12);
+      } else {
+        // Classic Cute Tilted Pixel Smiley Face (Matching Reference Image!)
+        ctx.save();
+        ctx.translate(128, 112);
+        ctx.rotate(-0.14);
+        ctx.translate(-128, -112);
+
+        if (blink) {
+          ctx.fillRect(82, 78, 24, 8);
+          ctx.fillRect(144, 78, 24, 8);
+        } else {
+          // Tall pixel eyes
+          ctx.fillRect(88, 62, 14, 34);
+          ctx.fillRect(148, 62, 14, 34);
+        }
+
+        // Chunky pixel smile arc
+        ctx.fillRect(76, 126, 14, 14);
+        ctx.fillRect(90, 140, 14, 14);
+        ctx.fillRect(104, 150, 48, 14);
+        ctx.fillRect(152, 140, 14, 14);
+        ctx.fillRect(166, 124, 14, 16);
+        ctx.restore();
+      }
+
+      if (crtTexture) crtTexture.needsUpdate = true;
+    }
+
+    function drawPixelStar(ctx, cx, cy, r) {
+      ctx.fillRect(cx - 4, cy - r, 8, r * 2);
+      ctx.fillRect(cx - r, cy - 4, r * 2, 8);
+      ctx.fillRect(cx - r * 0.6, cy - r * 0.6, r * 1.2, r * 1.2);
+    }
+
+    function cycleSmileyExpression() {
+      playPopSound('pop');
+      const moods = ['happy', 'downloading', 'sunglasses'];
+      const next = moods[(moods.indexOf(state.macMood) + 1) % moods.length];
+      state.macMood = next;
+      drawCrtFace(state.macMood, false);
+      showToast(`Mac expression: ${next.toUpperCase()}`, '🖥️');
+    }
+
+    // =========================================================================
+    // 1. HERO 3D SCENE: Retro Lavender Mac + Slime Swirls + Iridescent CD-ROM
+    // =========================================================================
+    let heroScene, heroCamera, heroRenderer, macGroup, cdMesh, slimeGroup, cursorMesh, noteGroup, boltMesh;
+    let heroDrag = false, heroPrev = { x: 0, y: 0 };
+    let heroRotTarget = { x: 0.08, y: -0.28 };
+    let heroRotCurrent = { x: 0.08, y: -0.28 };
+
+    function initHero3D() {
+      const canvas = document.getElementById('heroMacCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      heroScene = new THREE.Scene();
+      const w = canvas.clientWidth || 500;
+      const h = canvas.clientHeight || 440;
+
+      heroCamera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
+      heroCamera.position.set(0, 0.25, 8.6);
+
+      heroRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      heroRenderer.setSize(w, h, false);
+      heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Bright Clay Studio Lighting
+      const hemi = new THREE.HemisphereLight(0xffffff, 0x8b5cf6, 1.15);
+      heroScene.add(hemi);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+      keyLight.position.set(5, 7, 8);
+      heroScene.add(keyLight);
+
+      const pinkRim = new THREE.PointLight(0xff69c6, 1.5, 20);
+      pinkRim.position.set(-4, 3, 4);
+      heroScene.add(pinkRim);
+
+      macGroup = new THREE.Group();
+      heroScene.add(macGroup);
+
+      // Clay-Matte Lavender Macintosh Chassis
+      const lavenderClay = new THREE.MeshStandardMaterial({
+        color: 0xD9CEFF,
+        roughness: 0.35,
+        metalness: 0.08
+      });
+      const darkerLavender = new THREE.MeshStandardMaterial({
+        color: 0xB8A6F5,
+        roughness: 0.4,
+        metalness: 0.1
+      });
+
+      // Main Upper CRT Head
+      const headGeo = new THREE.BoxGeometry(3.1, 2.75, 2.5);
+      const headMesh = new THREE.Mesh(headGeo, lavenderClay);
+      headMesh.position.set(0.15, 0.55, 0);
+      macGroup.add(headMesh);
+
+      // Front CRT Bezel Frame
+      const bezelGeo = new THREE.BoxGeometry(2.75, 2.35, 0.28);
+      const bezelMesh = new THREE.Mesh(bezelGeo, darkerLavender);
+      bezelMesh.position.set(0.15, 0.58, 1.24);
+      macGroup.add(bezelMesh);
+
+      // Glowing Pixel Smiley Screen Plane
+      const screenGeo = new THREE.PlaneGeometry(2.25, 1.9);
+      const screenMat = new THREE.MeshBasicMaterial({ map: crtTexture });
+      const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+      screenMesh.position.set(0.15, 0.58, 1.39);
+      macGroup.add(screenMesh);
+
+      // Lower Floppy / Keyboard Deck Base
+      const baseGeo = new THREE.BoxGeometry(3.25, 0.95, 2.85);
+      const baseMesh = new THREE.Mesh(baseGeo, lavenderClay);
+      baseMesh.position.set(0.15, -1.25, 0.22);
+      macGroup.add(baseMesh);
+
+      // Mint LCD Mini Display ("kitvid") on Front Deck
+      const lcdCanvas = document.createElement('canvas');
+      lcdCanvas.width = 256;
+      lcdCanvas.height = 64;
+      const lctx = lcdCanvas.getContext('2d');
+      lctx.fillStyle = '#A7F3D0';
+      lctx.fillRect(0, 0, 256, 64);
+      lctx.fillStyle = '#064E3B';
+      lctx.font = 'bold 34px monospace';
+      lctx.fillText('kitvid_v2', 28, 44);
+      const lcdTex = new THREE.CanvasTexture(lcdCanvas);
+
+      const lcdMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(1.55, 0.42, 0.12),
+        new THREE.MeshBasicMaterial({ map: lcdTex })
+      );
+      lcdMesh.position.set(0.35, -1.08, 1.64);
+      macGroup.add(lcdMesh);
+
+      // Floppy Drive Slot
+      const slotMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(1.3, 0.08, 0.1),
+        new THREE.MeshStandardMaterial({ color: 0x334155 })
+      );
+      slotMesh.position.set(0.35, -1.42, 1.64);
+      macGroup.add(slotMesh);
+
+      // Glossy Liquid Pink Slime Swirls Wrapping the Mac
+      slimeGroup = new THREE.Group();
+      const slimeMat = new THREE.MeshPhysicalMaterial({
+        color: 0xFF47B6,
+        emissive: 0x590938,
+        roughness: 0.12,
+        metalness: 0.1,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.08
+      });
+
+      const swirl1 = new THREE.Mesh(new THREE.TorusGeometry(1.75, 0.22, 20, 64, Math.PI * 1.35), slimeMat);
+      swirl1.position.set(0.1, -0.7, 0.3);
+      swirl1.rotation.set(1.2, 0.3, -0.4);
+      slimeGroup.add(swirl1);
+
+      const swirl2 = new THREE.Mesh(new THREE.TorusKnotGeometry(0.65, 0.16, 64, 16, 2, 3), slimeMat);
+      swirl2.position.set(0.15, 2.15, 0.1);
+      slimeGroup.add(swirl2);
+
+      // Glossy Slime Droplets
+      const dropPositions = [[-1.55, 0.2, 1.1], [1.75, -0.6, 1.2], [-1.3, -1.3, 1.4]];
+      dropPositions.forEach(([dx, dy, dz]) => {
+        const drop = new THREE.Mesh(new THREE.SphereGeometry(0.24, 20, 20), slimeMat);
+        drop.position.set(dx, dy, dz);
+        drop.scale.set(1, 1.25, 0.9);
+        slimeGroup.add(drop);
+      });
+      macGroup.add(slimeGroup);
+
+      // Spinning Holographic Iridescent CD-ROM (Bottom-Left of Mac)
+      const cdCanvas = document.createElement('canvas');
+      cdCanvas.width = 256;
+      cdCanvas.height = 256;
+      const cctx = cdCanvas.getContext('2d');
+      const grad = cctx.createConicGradient(0, 128, 128);
+      grad.addColorStop(0, '#E0F2FE');
+      grad.addColorStop(0.2, '#F472B6');
+      grad.addColorStop(0.4, '#D4FF2A');
+      grad.addColorStop(0.6, '#818CF8');
+      grad.addColorStop(0.8, '#38BDF8');
+      grad.addColorStop(1, '#E0F2FE');
+      cctx.fillStyle = grad;
+      cctx.beginPath();
+      cctx.arc(128, 128, 124, 0, Math.PI * 2);
+      cctx.fill();
+      // Inner transparent ring
+      cctx.globalCompositeOperation = 'destination-out';
+      cctx.beginPath();
+      cctx.arc(128, 128, 34, 0, Math.PI * 2);
+      cctx.fill();
+      cctx.globalCompositeOperation = 'source-over';
+      cctx.strokeStyle = '#111318';
+      cctx.lineWidth = 4;
+      cctx.beginPath();
+      cctx.arc(128, 128, 122, 0, Math.PI * 2);
+      cctx.stroke();
+
+      const cdTex = new THREE.CanvasTexture(cdCanvas);
+      const cdGeo = new THREE.CylinderGeometry(1.05, 1.05, 0.05, 48);
+      cdGeo.rotateX(Math.PI / 2);
+      cdMesh = new THREE.Mesh(
+        cdGeo,
+        new THREE.MeshStandardMaterial({ map: cdTex, metalness: 0.75, roughness: 0.18 })
+      );
+      cdMesh.position.set(-1.35, -1.05, 1.65);
+      macGroup.add(cdMesh);
+
+      // Floating 3D Coral Musical Note (Top-Left of Mac)
+      noteGroup = new THREE.Group();
+      const noteMat = new THREE.MeshStandardMaterial({ color: 0xFB7185, roughness: 0.25 });
+      const head1 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), noteMat);
+      const head2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), noteMat);
+      head2.position.set(0.48, 0.12, 0);
+      const stem1 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.75, 12), noteMat);
+      stem1.position.set(0.14, 0.35, 0);
+      const stem2 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.75, 12), noteMat);
+      stem2.position.set(0.62, 0.47, 0);
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.14, 0.1), noteMat);
+      bar.position.set(0.38, 0.75, 0);
+      bar.rotation.z = 0.24;
+      noteGroup.add(head1, head2, stem1, stem2, bar);
+      noteGroup.position.set(-1.35, 2.05, 0.6);
+      macGroup.add(noteGroup);
+
+      // Floating 3D Yellow Lightning Bolt (Right of Mac)
+      const boltShape = new THREE.Shape();
+      boltShape.moveTo(0.1, 0.5);
+      boltShape.lineTo(-0.25, 0.0);
+      boltShape.lineTo(0.02, 0.0);
+      boltShape.lineTo(-0.15, -0.5);
+      boltShape.lineTo(0.28, 0.08);
+      boltShape.lineTo(0.02, 0.08);
+      boltShape.closePath();
+      const boltGeo = new THREE.ExtrudeGeometry(boltShape, { depth: 0.16, bevelEnabled: true, bevelSize: 0.03, bevelThickness: 0.03 });
+      boltMesh = new THREE.Mesh(boltGeo, new THREE.MeshStandardMaterial({ color: 0xFACC15, roughness: 0.25 }));
+      boltMesh.position.set(2.15, 1.35, 0.6);
+      macGroup.add(boltMesh);
+
+      // Chunky 3D Chrome Arrow Cursor (Bottom-Right)
+      const curShape = new THREE.Shape();
+      curShape.moveTo(0, 0.55);
+      curShape.lineTo(-0.35, -0.35);
+      curShape.lineTo(-0.08, -0.22);
+      curShape.lineTo(0.05, -0.52);
+      curShape.lineTo(0.2, -0.45);
+      curShape.lineTo(0.07, -0.15);
+      curShape.lineTo(0.35, -0.15);
+      curShape.closePath();
+      const curGeo = new THREE.ExtrudeGeometry(curShape, { depth: 0.18, bevelEnabled: true, bevelSize: 0.03, bevelThickness: 0.03 });
+      cursorMesh = new THREE.Mesh(curGeo, new THREE.MeshStandardMaterial({ color: 0xE2E8F0, metalness: 0.85, roughness: 0.15 }));
+      cursorMesh.position.set(1.55, -1.55, 1.85);
+      cursorMesh.rotation.z = 0.35;
+      macGroup.add(cursorMesh);
+
+      // Drag Orbit Events
+      canvas.addEventListener('mousedown', (e) => {
+        heroDrag = true;
+        heroPrev = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('mouseup', () => { heroDrag = false; });
+      window.addEventListener('mousemove', (e) => {
+        if (!heroDrag) return;
+        const dx = e.clientX - heroPrev.x;
+        const dy = e.clientY - heroPrev.y;
+        heroRotTarget.y += dx * 0.01;
+        heroRotTarget.x = Math.max(-0.6, Math.min(0.6, heroRotTarget.x + dy * 0.01));
+        heroPrev = { x: e.clientX, y: e.clientY };
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          heroDrag = true;
+          heroPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => { heroDrag = false; });
+      window.addEventListener('touchmove', (e) => {
+        if (!heroDrag || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - heroPrev.x;
+        const dy = e.touches[0].clientY - heroPrev.y;
+        heroRotTarget.y += dx * 0.012;
+        heroRotTarget.x = Math.max(-0.6, Math.min(0.6, heroRotTarget.x + dy * 0.012));
+        heroPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }, { passive: true });
+    }
+
+    // =========================================================================
+    // 2. BANNER 3D SCENE: Translucent Purple/Pink Cassette Tape ("PLAYBACK")
+    // =========================================================================
+    let casScene, casCamera, casRenderer, casGroup, leftReel, rightReel, casBodyMat;
+    const cassetteColors = [0xC084FC, 0xFF69C6, 0x38BDF8];
+
+    function initCassette3D() {
+      const canvas = document.getElementById('cassetteCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      casScene = new THREE.Scene();
+      const w = canvas.clientWidth || 440;
+      const h = canvas.clientHeight || 260;
+
+      casCamera = new THREE.PerspectiveCamera(38, w / h, 0.1, 50);
+      casCamera.position.set(0, 0, 5.4);
+
+      casRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      casRenderer.setSize(w, h, false);
+      casRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      casScene.add(new THREE.HemisphereLight(0xffffff, 0x7e22ce, 1.3));
+      const dir = new THREE.DirectionalLight(0xffffff, 1.1);
+      dir.position.set(4, 5, 6);
+      casScene.add(dir);
+
+      casGroup = new THREE.Group();
+      casGroup.rotation.set(-0.18, -0.28, 0.24);
+      casScene.add(casGroup);
+
+      // Translucent Y2K Cassette Shell
+      casBodyMat = new THREE.MeshPhysicalMaterial({
+        color: cassetteColors[0],
+        transparent: true,
+        opacity: 0.85,
+        roughness: 0.18,
+        metalness: 0.1,
+        clearcoat: 1.0
+      });
+      const shell = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.15, 0.36), casBodyMat);
+      casGroup.add(shell);
+
+      // White Top Sticker ("PLAYBACK")
+      const lblCanvas = document.createElement('canvas');
+      lblCanvas.width = 512;
+      lblCanvas.height = 128;
+      const ctx = lblCanvas.getContext('2d');
+      ctx.fillStyle = '#F8FAFC';
+      ctx.fillRect(0, 0, 512, 128);
+      ctx.fillStyle = '#111318';
+      ctx.font = 'bold 58px monospace';
+      ctx.fillText('PLAYBACK', 95, 84);
+      const lblTex = new THREE.CanvasTexture(lblCanvas);
+
+      const labelMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.9, 0.65),
+        new THREE.MeshBasicMaterial({ map: lblTex })
+      );
+      labelMesh.position.set(0, 0.56, 0.19);
+      casGroup.add(labelMesh);
+
+      // Dark Tape Window
+      const winMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(2.3, 0.72, 0.38),
+        new THREE.MeshStandardMaterial({ color: 0x1E1B4B, roughness: 0.3 })
+      );
+      winMesh.position.set(0, -0.1, 0);
+      casGroup.add(winMesh);
+
+      // Left & Right Spinning Spool Reels
+      const reelGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.42, 16);
+      reelGeo.rotateX(Math.PI / 2);
+      const reelMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.3 });
+
+      leftReel = new THREE.Mesh(reelGeo, reelMat);
+      leftReel.position.set(-0.68, -0.1, 0);
+      casGroup.add(leftReel);
+
+      rightReel = new THREE.Mesh(reelGeo, reelMat);
+      rightReel.position.set(0.68, -0.1, 0);
+      casGroup.add(rightReel);
+
+      // Pink Slime Ribbon Wrapping the Cassette
+      const slimeRibbon = new THREE.Mesh(
+        new THREE.TorusGeometry(1.45, 0.14, 16, 48, Math.PI * 1.1),
+        new THREE.MeshPhysicalMaterial({ color: 0xFF47B6, roughness: 0.12, clearcoat: 1.0 })
+      );
+      slimeRibbon.position.set(-0.3, -0.2, 0.1);
+      slimeRibbon.rotation.set(0.8, 0.4, -0.5);
+      casGroup.add(slimeRibbon);
+    }
+
+    function spinCassetteBoost() {
+      playPopSound('add');
+      state.cassetteBoost = 1.0;
+      showToast('Cassette spools boosted!', '📼');
+    }
+
+    function cycleCassetteTint() {
+      playPopSound('tick');
+      state.cassetteShellIndex = (state.cassetteShellIndex + 1) % cassetteColors.length;
+      if (casBodyMat) {
+        casBodyMat.color.setHex(cassetteColors[state.cassetteShellIndex]);
+      }
+    }
+
+    // =========================================================================
+    // 3. BOTTOM BENTO 3D SCENE: Tilted Smartphone Showing Smiley Face
+    // =========================================================================
+    let phoneScene, phoneCamera, phoneRenderer, phoneGroup;
+
+    function initPhone3D() {
+      const canvas = document.getElementById('phoneCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      phoneScene = new THREE.Scene();
+      const w = canvas.clientWidth || 260;
+      const h = canvas.clientHeight || 220;
+
+      phoneCamera = new THREE.PerspectiveCamera(38, w / h, 0.1, 40);
+      phoneCamera.position.set(0, 0, 4.4);
+
+      phoneRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      phoneRenderer.setSize(w, h, false);
+      phoneRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      phoneScene.add(new THREE.HemisphereLight(0xffffff, 0x6366f1, 1.4));
+      const dir = new THREE.DirectionalLight(0xffffff, 1.1);
+      dir.position.set(3, 5, 5);
+      phoneScene.add(dir);
+
+      phoneGroup = new THREE.Group();
+      phoneGroup.rotation.set(-0.15, -0.25, -0.22);
+      phoneScene.add(phoneGroup);
+
+      // Sleek Smartphone Chassis
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(1.45, 2.75, 0.18),
+        new THREE.MeshStandardMaterial({ color: 0x1E1B4B, metalness: 0.7, roughness: 0.2 })
+      );
+      phoneGroup.add(body);
+
+      // Screen with Shared Smiley Texture
+      const scr = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.28, 2.48),
+        new THREE.MeshBasicMaterial({ map: crtTexture })
+      );
+      scr.position.z = 0.1;
+      phoneGroup.add(scr);
+    }
+
+    // =========================================================================
+    // UNIFIED 3D ANIMATION LOOP & RESIZE HANDLER
+    // =========================================================================
+    function animateAll3D() {
+      requestAnimationFrame(animateAll3D);
+      const t = performance.now() * 0.001;
+
+      const activeCount = state.jobs.filter(j => j.status === 'downloading').length;
+
+      // Periodic Cute Blink on the CRT Smiley Face
+      blinkTimer += 0.016;
+      if (state.macMood === 'happy') {
+        if (!isBlinking && blinkTimer > 3.6) {
+          isBlinking = true;
+          drawCrtFace('happy', true);
+        } else if (isBlinking && blinkTimer > 3.78) {
+          isBlinking = false;
+          blinkTimer = 0;
+          drawCrtFace('happy', false);
+        }
+      }
+
+      // Update Hero 3D Mac
+      if (heroRenderer && heroScene && heroCamera && macGroup) {
+        if (!heroDrag) {
+          heroRotTarget.y = -0.28 + Math.sin(t * 0.9) * 0.14;
+          heroRotTarget.x = 0.08 + Math.cos(t * 0.7) * 0.05;
+        }
+        heroRotCurrent.x += (heroRotTarget.x - heroRotCurrent.x) * 0.08;
+        heroRotCurrent.y += (heroRotTarget.y - heroRotCurrent.y) * 0.08;
+
+        macGroup.rotation.x = heroRotCurrent.x;
+        macGroup.rotation.y = heroRotCurrent.y;
+        macGroup.position.y = Math.sin(t * 1.6) * 0.12;
+
+        if (cdMesh) {
+          cdMesh.rotation.z -= activeCount > 0 ? 0.09 : 0.025;
+        }
+        if (noteGroup) {
+          noteGroup.position.y = 2.05 + Math.sin(t * 2.4) * 0.14;
+          noteGroup.rotation.z = Math.sin(t * 1.8) * 0.15;
+        }
+        if (boltMesh) {
+          boltMesh.position.y = 1.35 + Math.cos(t * 2.2) * 0.14;
+        }
+        if (cursorMesh) {
+          cursorMesh.position.y = -1.55 + Math.sin(t * 3.0) * 0.08;
+        }
+
+        heroRenderer.render(heroScene, heroCamera);
+      }
+
+      // Update Banner 3D Cassette Tape
+      if (casRenderer && casScene && casCamera && casGroup) {
+        const reelSpeed = activeCount > 0 ? 0.18 : (0.03 + state.cassetteBoost * 0.22);
+        state.cassetteBoost = Math.max(0, state.cassetteBoost - 0.015);
+
+        if (leftReel) leftReel.rotation.z -= reelSpeed;
+        if (rightReel) rightReel.rotation.z -= reelSpeed;
+
+        casGroup.position.y = Math.sin(t * 1.8) * 0.1;
+        casGroup.rotation.y = -0.28 + Math.sin(t * 0.8) * 0.15;
+
+        const rpmBadge = document.getElementById('cassetteRpmStatus');
+        if (rpmBadge) {
+          rpmBadge.textContent = activeCount > 0
+            ? `REELS: SPINNING (${activeCount} ACTIVE)`
+            : 'REELS: STANDBY';
+        }
+
+        casRenderer.render(casScene, casCamera);
+      }
+
+      // Update Bottom Bento 3D Phone
+      if (phoneRenderer && phoneScene && phoneCamera && phoneGroup) {
+        phoneGroup.position.y = Math.sin(t * 1.7 + 1) * 0.09;
+        phoneGroup.rotation.y = -0.25 + Math.cos(t * 0.9) * 0.16;
+        phoneRenderer.render(phoneScene, phoneCamera);
+      }
+    }
+
+    function resize3DCanvases() {
+      const configs = [
+        { id: 'heroMacCanvas', cam: heroCamera, ren: heroRenderer },
+        { id: 'cassetteCanvas', cam: casCamera, ren: casRenderer },
+        { id: 'phoneCanvas', cam: phoneCamera, ren: phoneRenderer }
+      ];
+      configs.forEach(({ id, cam, ren }) => {
+        const el = document.getElementById(id);
+        if (!el || !cam || !ren) return;
+        const w = el.clientWidth;
+        const h = el.clientHeight;
+        if (w > 0 && h > 0) {
+          cam.aspect = w / h;
+          cam.updateProjectionMatrix();
+          ren.setSize(w, h, false);
+        }
+      });
+    }
+
+    // =========================================================================
+    // VIDEO DOWNLOADER CORE LOGIC & BENTO CONTROLS
+    // =========================================================================
+    const urlInput = document.getElementById('videoUrlInput');
+    const clearInputBtn = document.getElementById('clearInputBtn');
+
+    urlInput.addEventListener('input', () => {
+      clearInputBtn.classList.toggle('hidden', !urlInput.value.trim());
+    });
+
+    function focusUrlInput() {
+      playPopSound('pop');
+      urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      urlInput.focus();
+    }
+
+    function clearUrlInput() {
+      urlInput.value = '';
+      clearInputBtn.classList.add('hidden');
+      urlInput.focus();
+    }
+
+    async function pasteLinkFromClipboard() {
+      playPopSound('pop');
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            urlInput.value = text.trim();
+            urlInput.dispatchEvent(new Event('input'));
+            showToast('Link pasted from clipboard!', '📋');
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback when iframe blocks clipboard read
+      }
+      if (!urlInput.value.trim()) {
+        loadSamplePreset('synthwave');
+      } else {
+        urlInput.focus();
+        showToast('Press Ctrl+V / Cmd+V to paste', '⌨️');
+      }
+    }
+
+    function loadSamplePreset(key) {
+      playPopSound('tick');
+      const p = presets[key];
+      if (!p) return;
+      urlInput.value = p.url;
+      urlInput.dispatchEvent(new Event('input'));
+      showToast(`Loaded preset: ${p.title}`, '✨');
+    }
+
+    function batchDownloadAllPresets() {
+      playPopSound('add');
+      Object.values(presets).forEach((p, index) => {
+        setTimeout(() => addVideoToQueue(p.url), index * 220);
+      });
+    }
+
+    document.getElementById('downloadForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      let link = urlInput.value.trim();
+      if (!link) {
+        playPopSound('tick');
+        urlInput.focus();
+        showToast('Paste a video link or tap a preset first!', '🔗');
+        return;
+      }
+      if (!/^https?:\/\//i.test(link)) {
+        link = 'https://' + link;
+      }
+      addVideoToQueue(link);
+      clearUrlInput();
+    });
+
+    function resolveVideoInfo(url) {
+      for (const p of Object.values(presets)) {
+        if (url === p.url) return { ...p };
+      }
+      let title = 'Downloaded_Video_Stream.mp4';
+      try {
+        const parsed = new URL(url);
+        const host = parsed.hostname.replace('www.', '').split('.')[0];
+        const slug = parsed.pathname.split('/').filter(Boolean).pop();
+        title = slug && slug.length > 2
+          ? `${host.toUpperCase()} — ${decodeURIComponent(slug).replace(/[-_]+/g, ' ').slice(0, 34)}`
+          : `${host.toUpperCase()} Video #${Math.floor(100 + Math.random() * 900)}`;
+      } catch {
+        title = 'Local_Capture_' + Math.floor(1000 + Math.random() * 9000);
+      }
+      return {
+        url,
+        title,
+        sizeMb: Number((38 + Math.random() * 260).toFixed(1)),
+        duration: `${Math.floor(2 + Math.random() * 18)}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`
+      };
+    }
+
+    function addVideoToQueue(url) {
+      playPopSound('add');
+      const info = resolveVideoInfo(url);
+      const format = document.getElementById('formatSelect').value;
+
+      const job = {
+        id: 'dl_' + Date.now() + '_' + Math.floor(Math.random() * 999),
+        ...info,
+        format,
+        progress: 0,
+        status: 'downloading',
+        speed: '0.0 MB/s'
+      };
+
+      state.jobs.unshift(job);
+      syncMacExpression();
+      renderQueue();
+      runSimulatedDownload(job.id);
+    }
+
+    function runSimulatedDownload(jobId) {
+      const interval = setInterval(() => {
+        const job = state.jobs.find(j => j.id === jobId);
+        if (!job) {
+          clearInterval(interval);
+          return;
+        }
+        if (job.status !== 'downloading') return;
+
+        const step = state.bandwidthLimited
+          ? (3.2 + Math.random() * 3.0)
+          : (8.5 + Math.random() * 8.5);
+
+        job.progress = Math.min(100, job.progress + step);
+        job.speed = state.bandwidthLimited
+          ? `${(5.2 + Math.random() * 2.4).toFixed(1)} MB/s`
+          : `${(31.4 + Math.random() * 14.0).toFixed(1)} MB/s`;
+
+        if (job.progress >= 100) {
+          job.progress = 100;
+          job.status = 'completed';
+          state.totalSavedFiles += 1;
+          state.totalSavedMb += job.sizeMb;
+          updateVaultStats();
+          syncMacExpression();
+          playPopSound('chime');
+          showToast(`Saved: ${job.title}`, '🎉');
+          clearInterval(interval);
+        }
+
+        updateSingleJobCard(job);
+      }, 260);
+    }
+
+    function syncMacExpression() {
+      const active = state.jobs.some(j => j.status === 'downloading');
+      const completed = state.jobs.some(j => j.status === 'completed');
+      if (active) {
+        state.macMood = 'downloading';
+      } else if (completed) {
+        state.macMood = 'sunglasses';
+      } else {
+        state.macMood = 'happy';
+      }
+      drawCrtFace(state.macMood, false);
+    }
+
+    function updateVaultStats() {
+      document.getElementById('statFilesCount').textContent = state.totalSavedFiles;
+      const mb = Math.round(state.totalSavedMb);
+      document.getElementById('statDataSaved').innerHTML = mb >= 1000
+        ? `${(mb / 1000).toFixed(1)}<span class="text-xs">GB</span>`
+        : `${mb}<span class="text-xs">MB</span>`;
+    }
+
+    function toggleJobPause(jobId) {
+      playPopSound('pop');
+      const job = state.jobs.find(j => j.id === jobId);
+      if (!job || job.status === 'completed') return;
+      job.status = job.status === 'downloading' ? 'paused' : 'downloading';
+      syncMacExpression();
+      updateSingleJobCard(job);
+    }
+
+    function removeJob(jobId) {
+      playPopSound('tick');
+      state.jobs = state.jobs.filter(j => j.id !== jobId);
+      syncMacExpression();
+      renderQueue();
+    }
+
+    function clearCompletedDownloads() {
+      playPopSound('pop');
+      state.jobs = state.jobs.filter(j => j.status !== 'completed');
+      syncMacExpression();
+      renderQueue();
+    }
+
+    function updateSingleJobCard(job) {
+      const el = document.getElementById(job.id);
+      if (!el) {
+        renderQueue();
+        return;
+      }
+      const bar = el.querySelector('.js-bar');
+      const pct = el.querySelector('.js-pct');
+      const sub = el.querySelector('.js-sub');
+      const btn = el.querySelector('.js-action');
+
+      if (bar) {
+        bar.style.width = `${Math.floor(job.progress)}%`;
+        if (job.status === 'completed') {
+          bar.classList.remove('candy-progress');
+          bar.classList.add('candy-progress-done');
+        }
+      }
+      if (pct) pct.textContent = `${Math.floor(job.progress)}%`;
+      if (sub) {
+        if (job.status === 'completed') {
+          sub.innerHTML = `<span class="text-emerald-700 font-extrabold">✓ Saved to folder</span> • ${job.sizeMb} MB`;
+        } else if (job.status === 'paused') {
+          sub.innerHTML = `<span class="text-amber-600 font-extrabold">Paused</span> • ${job.sizeMb} MB`;
+        } else {
+          sub.innerHTML = `<span class="text-pink-600 font-extrabold">${job.speed}</span> • ${job.sizeMb} MB`;
+        }
+      }
+      if (btn) {
+        if (job.status === 'completed') {
+          btn.textContent = 'Play';
+          btn.className = 'js-action text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-[#D4FF2A] border border-[#111318] text-[#111318] cursor-pointer';
+          btn.onclick = () => {
+            playPopSound('chime');
+            showToast(`Playing ${job.title}`, '▶️');
+          };
+        } else {
+          btn.textContent = job.status === 'paused' ? 'Resume' : 'Pause';
+        }
+      }
+    }
+
+    function renderQueue() {
+      const drawer = document.getElementById('queueDrawer');
+      const list = document.getElementById('downloadItemsContainer');
+      const countEl = document.getElementById('activeQueueCount');
+
+      countEl.textContent = state.jobs.length;
+
+      if (state.jobs.length === 0) {
+        drawer.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      drawer.classList.remove('hidden');
+      list.innerHTML = state.jobs.map(job => {
+        const isDone = job.status === 'completed';
+        const isPaused = job.status === 'paused';
+        return `
+          <div id="${job.id}" class="bg-[#F8FAFC] border border-slate-200 rounded-2xl p-3 space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-xs sm:text-sm font-extrabold text-[#111318] truncate">${job.title}</div>
+                <div class="js-sub text-[11px] font-semibold text-slate-500">
+                  ${isDone
+                    ? `<span class="text-emerald-700 font-extrabold">✓ Saved to folder</span> • ${job.sizeMb} MB`
+                    : isPaused
+                      ? `<span class="text-amber-600 font-extrabold">Paused</span> • ${job.sizeMb} MB`
+                      : `<span class="text-pink-600 font-extrabold">${job.speed}</span> • ${job.sizeMb} MB`
+                  }
+                </div>
+              </div>
+              <span class="shrink-0 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">
+                ${job.format}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <div class="flex-1 h-2.5 bg-slate-200 rounded-full overflow-hidden border border-[#111318]/20">
+                <div class="js-bar ${isDone ? 'candy-progress-done' : 'candy-progress'} h-full rounded-full" style="width: ${Math.floor(job.progress)}%"></div>
+              </div>
+              <span class="js-pct font-mono-code text-[11px] font-bold text-[#111318] w-9 text-right">
+                ${Math.floor(job.progress)}%
+              </span>
+            </div>
+
+            <div class="flex items-center justify-end gap-2">
+              <button type="button"
+                onclick="${isDone ? `showToast('Playing ${job.title.replace(/'/g, '')}', '▶️')` : `toggleJobPause('${job.id}')`}"
+                class="js-action text-[11px] font-extrabold px-2.5 py-1 rounded-full ${isDone ? 'bg-[#D4FF2A] border border-[#111318]' : 'bg-white border border-slate-300'} text-[#111318] cursor-pointer">
+                ${isDone ? 'Play' : (isPaused ? 'Resume' : 'Pause')}
+              </button>
+              <button type="button" onclick="removeJob('${job.id}')"
+                class="text-[11px] font-bold text-slate-400 hover:text-rose-600 px-1.5 cursor-pointer">
+                Remove
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // BENTO PREFERENCES HANDLERS
+    // =========================================================================
+    const savePathInput = document.getElementById('savePathInput');
+
+    function cycleSaveFolder() {
+      playPopSound('pop');
+      state.folderIdx = (state.folderIdx + 1) % state.folderPresets.length;
+      savePathInput.value = state.folderPresets[state.folderIdx];
+      showToast('Save folder updated!', '📁');
+    }
+
+    function resetSaveFolder() {
+      playPopSound('tick');
+      state.folderIdx = 0;
+      savePathInput.value = state.defaultFolder;
+      showToast('Restored default folder', '↩️');
+    }
+
+    function toggleEditFolder() {
+      playPopSound('tick');
+      const row = document.getElementById('customPathRow');
+      row.classList.toggle('hidden');
+      if (!row.classList.contains('hidden')) {
+        const field = document.getElementById('manualFolderField');
+        field.value = savePathInput.value;
+        field.focus();
+      }
+    }
+
+    function applyManualFolder() {
+      playPopSound('pop');
+      const val = document.getElementById('manualFolderField').value.trim();
+      if (!val) return;
+      savePathInput.value = val;
+      document.getElementById('customPathRow').classList.add('hidden');
+      showToast('Custom path saved!', '💾');
+    }
+
+    function toggleBandwidthLimiter() {
+      state.bandwidthLimited = !state.bandwidthLimited;
+      playPopSound('pop');
+
+      const btn = document.getElementById('bandwidthToggle');
+      const thumb = document.getElementById('bandwidthThumb');
+      const desc = document.getElementById('fragmentStatusText');
+
+      btn.setAttribute('aria-checked', String(state.bandwidthLimited));
+      if (state.bandwidthLimited) {
+        btn.classList.add('is-active');
+        thumb.style.transform = 'translateX(20px)';
+        desc.innerHTML = 'Eco mode: <span class="font-extrabold text-emerald-700">8 fragments</span> (low latency).';
+      } else {
+        btn.classList.remove('is-active');
+        thumb.style.transform = 'translateX(0px)';
+        desc.innerHTML = 'Max speed: <span class="font-extrabold text-pink-600">32 parallel fragments</span> active.';
+      }
+    }
+
+    function selectEngineCore(name, clickedBtn) {
+      playPopSound('tick');
+      state.engineName = name;
+      document.querySelectorAll('.engine-pill').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-[#111318]', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+      });
+      clickedBtn.classList.add('bg-white', 'text-[#111318]', 'shadow-sm');
+      clickedBtn.classList.remove('text-slate-600');
+
+      const notes = {
+        'Native': 'Chunked HTTP + Auto-Merge',
+        'Aria2c': '16-Connection Multi-Source RPC',
+        'yt-dlp': 'Direct Extractor + SponsorBlock'
+      };
+      document.getElementById('engineModeNote').textContent = notes[name] || '';
+      showToast(`Engine switched to ${name}`, '⚡');
+    }
+
+    // Boot All 3D Stages & Listeners on Window Load
+    window.onload = function () {
+      initCrtScreenTexture();
+      initHero3D();
+      initCassette3D();
+      initPhone3D();
+      resize3DCanvases();
+      animateAll3D();
+      window.addEventListener('resize', resize3DCanvases);
+    };
+  </script>
+</body>
+</html>

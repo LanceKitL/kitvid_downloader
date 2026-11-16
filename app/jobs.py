@@ -122,6 +122,23 @@ class JobManager:
     def list_jobs(self) -> list[Job]:
         return sorted(self.jobs.values(), key=lambda job: job.created_at, reverse=True)
 
+    @staticmethod
+    async def _terminate_process(process: asyncio.subprocess.Process) -> None:
+        if process.returncode is not None:
+            return
+        try:
+            process.terminate()
+        except ProcessLookupError:
+            pass
+        try:
+            await asyncio.wait_for(process.wait(), timeout=5)
+        except asyncio.TimeoutError:
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+            await process.wait()
+
     async def cancel(self, job_id: str) -> bool:
         job = self.jobs.get(job_id)
         if not job:
@@ -134,20 +151,21 @@ class JobManager:
         job.stage = "Cancelled"
         job.finished_at = time.time()
         process = job.process
-        if process and process.returncode is None:
-            try:
-                process.terminate()
-            except ProcessLookupError:
-                pass
-            try:
-                await asyncio.wait_for(process.wait(), timeout=5)
-            except asyncio.TimeoutError:
-                try:
-                    process.kill()
-                except ProcessLookupError:
-                    pass
+        if process:
+            await self._terminate_process(process)
         self._remove_dir(job)
         return True
+
+    async def cancel_all(self) -> list[Job]:
+        jobs = [
+            job
+            for job in self.jobs.values()
+            if job.status in ("queued", "running")
+        ]
+        await asyncio.gather(*(self.cancel(job.id) for job in jobs))
+        for job in jobs:
+            self.delete(job.id)
+        return jobs
 
     def delete(self, job_id: str) -> bool:
         if job_id not in self.jobs:
@@ -204,6 +222,9 @@ class JobManager:
                 is_live=job.is_live,
             )
 
+            if job.status == "cancelled":
+                return
+
             job.status = "running"
             job.stage = "Starting yt-dlp"
 
@@ -214,15 +235,22 @@ class JobManager:
                     stderr=asyncio.subprocess.PIPE,
                 )
             except FileNotFoundError:
-                self._fail(job, "yt-dlp is not installed or not on PATH.")
+                if job.status != "cancelled":
+                    self._fail(job, "yt-dlp is not installed or not on PATH.")
                 self._remove_dir(job)
                 return
             except OSError as exc:
-                self._fail(job, "Could not start yt-dlp.", str(exc))
+                if job.status != "cancelled":
+                    self._fail(job, "Could not start yt-dlp.", str(exc))
                 self._remove_dir(job)
                 return
 
             job.process = process
+            if job.status == "cancelled":
+                await self._terminate_process(process)
+                self._remove_dir(job)
+                return
+
             stderr_chunks: list[str] = []
 
             async def drain_stderr() -> None:
@@ -243,8 +271,6 @@ class JobManager:
                     returncode = await process.wait()
                     await asyncio.gather(stderr_task, return_exceptions=True)
             except TimeoutError:
-                job.status = "cancelled"
-                job.stage = "Timed out"
                 try:
                     process.kill()
                 except ProcessLookupError:
@@ -252,6 +278,9 @@ class JobManager:
                 await process.wait()
                 stderr_task.cancel()
                 await asyncio.gather(stderr_task, return_exceptions=True)
+                if job.status == "cancelled":
+                    self._remove_dir(job)
+                    return
                 self._fail(job, "The download timed out.")
                 self._remove_dir(job)
                 return
@@ -295,6 +324,9 @@ class JobManager:
 
     @staticmethod
     def _handle_line(job: Job, line: str) -> None:
+        if job.status == "cancelled":
+            return
+
         if line.startswith("PROGRESS:"):
             parts = line.split(":", 6)
             if len(parts) != 7:
@@ -358,6 +390,8 @@ class JobManager:
 
     @staticmethod
     def _fail(job: Job, message: str, detail: str | None = None) -> None:
+        if job.status == "cancelled":
+            return
         job.status = "error"
         job.stage = "Failed"
         job.error = message

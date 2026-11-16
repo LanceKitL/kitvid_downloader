@@ -6,6 +6,9 @@ const state = {
   queueSeq: 0,
   jobs: [],
   jobsRequest: false,
+  jobsRevision: 0,
+  cancellingJobs: new Set(),
+  cancelAllRequest: false,
 };
 
 const STATUS_LABELS = {
@@ -673,6 +676,7 @@ $("clear-queue").addEventListener("click", () => {
 /* ─── Jobs (keyed in-place updates, so polling never replays animation) ── */
 
 function jobDetail(job) {
+  if (job.cancel_pending) return "Stopping download…";
   if (job.status === "queued") return "Waiting for a free slot";
   if (job.status === "running") {
     const parts = [];
@@ -739,8 +743,8 @@ function updateJobEl(el, job, justFinished) {
   }
 
   const pill = el.querySelector(".pill");
-  pill.className = `pill ${job.status}`;
-  pill.textContent = STATUS_LABELS[job.status] || job.status;
+  pill.className = job.cancel_pending ? "pill running" : `pill ${job.status}`;
+  pill.textContent = job.cancel_pending ? "Cancelling…" : STATUS_LABELS[job.status] || job.status;
 
   const bar = el.querySelector(".progress-bar");
   const shown = job.status === "finished" ? 100 : percent;
@@ -769,9 +773,10 @@ function updateJobEl(el, job, justFinished) {
   }
 
   const remove = el.querySelector("[data-job-action]");
-  const label = terminal ? "Delete" : "Cancel";
+  const label = job.cancel_pending ? "Cancelling…" : terminal ? "Delete" : "Cancel";
   if (remove.textContent !== label) remove.textContent = label;
   remove.dataset.jobId = job.id;
+  remove.disabled = Boolean(job.cancel_pending);
 
   // Rare, meaningful moment: celebrate once, on the live transition only.
   if (justFinished && !reduceMotion.matches) {
@@ -788,11 +793,18 @@ function renderJobs() {
     card.classList.add("hidden");
     container.innerHTML = "";
     $("downloads-summary").textContent = "";
+    $("cancel-all").classList.add("hidden");
+    $("cancel-all").disabled = false;
+    $("cancel-all").textContent = "Cancel all";
     updateEmptyState();
     return;
   }
 
   const active = state.jobs.filter((j) => j.status === "queued" || j.status === "running").length;
+  const cancelAll = $("cancel-all");
+  cancelAll.classList.toggle("hidden", active === 0);
+  cancelAll.disabled = state.cancelAllRequest;
+  cancelAll.textContent = state.cancelAllRequest ? "Cancelling…" : "Cancel all";
   reveal(card);
   if (!(state.savedUntil && Date.now() < state.savedUntil)) {
     $("downloads-summary").textContent =
@@ -846,6 +858,14 @@ function updateSaveAll() {
   if (label.textContent !== text) label.textContent = text;
 }
 
+async function cancelJob(jobId) {
+  const result = await api(`/api/jobs/${encodeURIComponent(jobId)}`, { method: "DELETE" });
+  if (result.job?.status === "cancelled" && !result.deleted) {
+    await api(`/api/jobs/${encodeURIComponent(jobId)}`, { method: "DELETE" });
+  }
+  return result;
+}
+
 // Trigger each finished file in turn. Browsers may ask once to allow
 // multiple downloads; a short gap keeps them from being dropped.
 $("save-all").addEventListener("click", async () => {
@@ -875,14 +895,17 @@ $("save-all").addEventListener("click", async () => {
 async function refreshJobs() {
   if (state.jobsRequest) return;
   state.jobsRequest = true;
+  const revision = state.jobsRevision;
   try {
     const data = await api("/api/jobs");
-    state.jobs = data.jobs || [];
+    if (revision !== state.jobsRevision) return;
+    state.jobs = (data.jobs || []).filter((job) => !state.cancellingJobs.has(job.id));
     renderJobs();
   } catch {
     // Transient polling failures should not disrupt the UI.
   } finally {
     state.jobsRequest = false;
+    if (revision !== state.jobsRevision) refreshJobs();
   }
 }
 
@@ -891,15 +914,66 @@ $("downloads").addEventListener("click", async (event) => {
   if (!button) return;
 
   const jobId = button.dataset.jobId;
-  button.disabled = true;
+  if (state.cancellingJobs.has(jobId)) return;
+  const job = state.jobs.find((item) => item.id === jobId);
+  if (!job) return;
+
+  const active = job.status === "queued" || job.status === "running";
+  state.jobsRevision += 1;
+  if (active) {
+    state.cancellingJobs.add(jobId);
+  }
+  state.jobs = state.jobs.filter((item) => item.id !== jobId);
+  renderJobs();
+
   try {
-    await api(`/api/jobs/${encodeURIComponent(jobId)}`, { method: "DELETE" });
-    state.jobs = state.jobs.filter((job) => job.id !== jobId);
-    const el = button.closest(".job-item");
-    leave(el, () => renderJobs());
+    if (active) await cancelJob(jobId);
+    else await api(`/api/jobs/${encodeURIComponent(jobId)}`, { method: "DELETE" });
+    state.jobs = state.jobs.filter((item) => item.id !== jobId);
   } catch (error) {
     showError(error.message);
-    button.disabled = false;
+  } finally {
+    state.cancellingJobs.delete(jobId);
+    state.jobsRevision += 1;
+    renderJobs();
+    refreshJobs();
+  }
+});
+
+$("cancel-all").addEventListener("click", async () => {
+  if (state.cancelAllRequest) return;
+  const activeJobs = state.jobs.filter(
+    (job) => job.status === "queued" || job.status === "running"
+  );
+  if (!activeJobs.length) return;
+
+  state.cancelAllRequest = true;
+  state.jobsRevision += 1;
+  activeJobs.forEach((job) => state.cancellingJobs.add(job.id));
+  const activeIds = new Set(activeJobs.map((job) => job.id));
+  state.jobs = state.jobs.filter((job) => !activeIds.has(job.id));
+  renderJobs();
+
+  try {
+    const results = await Promise.allSettled(
+      activeJobs.map((job) => cancelJob(job.id))
+    );
+    const failures = [];
+    const failedIds = new Set();
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        failedIds.add(activeJobs[index].id);
+        failures.push(`${activeJobs[index].title || activeJobs[index].id}: ${result.reason.message}`);
+      }
+    });
+    state.jobs = state.jobs.filter((job) => !activeIds.has(job.id) || failedIds.has(job.id));
+    if (failures.length) showError(`Some downloads could not be cancelled. ${failures.join(" ")}`);
+  } finally {
+    activeIds.forEach((jobId) => state.cancellingJobs.delete(jobId));
+    state.cancelAllRequest = false;
+    state.jobsRevision += 1;
+    renderJobs();
+    refreshJobs();
   }
 });
 

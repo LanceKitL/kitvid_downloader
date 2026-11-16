@@ -3,47 +3,82 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KitVid</title>
+    <title>kitvid✦ — Download Without Limits</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/static/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/style.css?v=7" />
     <link rel="shortcut icon" href="/static/2.png" type="image/x-icon">
   </head>
   <body>
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand">
-          <span class="mark" aria-hidden="true">KV</span>
-          <span class="brand-name">KitVid</span>
+        <div class="brand" aria-label="KitVid">
+          <span class="brand-name">kitvid</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 1 14.8 9.2 23 12l-8.2 2.8L12 23l-2.8-8.2L1 12l8.2-2.8L12 1Z" />
+          </svg>
         </div>
-        <span class="topbar-note">Runs locally on your computer</span>
-        <span class="orbs" aria-hidden="true"><i></i><i></i><i></i></span>
+        <a
+          class="github-star"
+          href="https://github.com/LanceKitL/kitvid_downloader"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ⭐ Star this on GitHub <span aria-hidden="true"></span>
+        </a>
       </div>
     </header>
 
     <main class="canvas">
-      <h1 class="screen-title"><span class="sparkle" aria-hidden="true">✦</span>Download a video</h1>
+      <section class="hero-layout" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <h1 id="page-title" class="screen-title">
+            <span class="title-line balloon-pink">DOWNLOAD</span>
+            <span class="title-line balloon-chrome">WITHOUT</span>
+            <span class="title-line balloon-lime">LIMITS</span>
+          </h1>
+          <p class="hero-intro">A self-hosted privacy-first video downloader!</p>
 
-      <!-- 1. Primary task first -->
-      <section class="panel panel-hero" aria-labelledby="add-h">
-        <form id="add-form">
-          <h2 id="add-h" class="sr-only">Add video</h2>
-          <label for="url">Video link</label>
-          <div class="input-row">
-            <input
-              id="url"
-              type="url"
-              placeholder="Paste a link, e.g. https://…"
-              autocomplete="off"
-              spellcheck="false"
-              required
-            />
-            <button type="button" id="paste-btn" class="secondary">Paste</button>
-            <button type="submit" id="add-btn"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Add video</span></button>
+          <section class="panel panel-hero" aria-labelledby="add-h">
+            <form id="add-form">
+              <h2 id="add-h" class="sr-only">Add a video</h2>
+              <label for="url">Video link</label>
+              <div class="input-row">
+                <input
+                  id="url"
+                  type="url"
+                  placeholder="Paste a video link"
+                  autocomplete="off"
+                  spellcheck="false"
+                  required
+                />
+                <button type="button" id="paste-btn" class="secondary">Paste</button>
+                <button type="submit" id="add-btn"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Add video</span></button>
+              </div>
+              <p class="hint">Works with supported sites. Sign-in or protected videos may not be available.</p>
+            </form>
+          </section>
+        </div>
+
+        <div class="hero-art">
+          <div class="mac-doodle" aria-hidden="true">NO<br />ADS! :)</div>
+          <button type="button" class="mac-sticky" id="mac-expression" aria-label="Change the Macintosh screen expression">
+            FAST<br />DOWNLOADS<br />ALWAYS WIN
+          </button>
+          <canvas
+            id="heroMacCanvas"
+            class="canvas-3d-stage"
+            role="img"
+            aria-label="Interactive 3D lavender Macintosh. Drag or use arrow keys to rotate it."
+            aria-describedby="mac-hint"
+            tabindex="0"
+          ></canvas>
+          <p id="hero3d-error" class="hero-3d-error" role="status" hidden></p>
+          <div class="mac-hint" id="mac-hint" aria-hidden="true">
+            Drag to spin 3D Mac · CD &amp; Slime react to downloads
           </div>
-          <p class="hint">Works with most sites supported by yt-dlp. DRM-protected streams can’t be downloaded.</p>
-        </form>
+        </div>
       </section>
 
       <!-- Errors: dismissible, announced -->
@@ -57,8 +92,8 @@
         <div class="empty-art" aria-hidden="true">
           <span></span><span></span><span></span>
         </div>
-        <p class="empty-title">Nothing here yet</p>
-        <p class="muted">Paste a link above, pick a quality, and your download will appear here.</p>
+        <p class="empty-title">No downloads yet</p>
+        <p class="muted">Add a video link to get started.</p>
       </section>
 
       <!-- Queue -->
@@ -79,73 +114,86 @@
           <h2 id="downloads-h" class="section-title">Downloads</h2>
           <div class="action-row">
             <span id="downloads-summary" class="muted"></span>
+            <button id="cancel-all" type="button" class="secondary small hidden">Cancel all</button>
             <button id="save-all" type="button" class="small hidden"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Save all</span></button>
           </div>
         </div>
         <div id="downloads" class="downloads"></div>
       </section>
 
-      <!-- 2. Preferences, set-and-forget, so they come last -->
-      <h2 class="group-title">Preferences</h2>
-
-      <section class="panel" aria-labelledby="settings-h">
-        <div class="panel-head">
-          <h3 id="settings-h" class="section-title">Where files are saved</h3>
+      <section id="preferences" class="preferences" aria-labelledby="preferences-h">
+        <div class="preferences-heading">
+          <h2 id="preferences-h" class="group-title">Settings</h2>
+          <p>Choose where downloads go and how fast they run.</p>
         </div>
-        <p id="settings-path" class="path">Loading…</p>
-        <form id="settings-form" class="settings-form">
-          <div class="action-row">
-            <button type="button" id="browse-dir"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Change folder…</span></button>
-            <button type="button" id="reset-settings" class="secondary">Reset to default</button>
-          </div>
-          <details id="path-advanced" class="advanced">
-            <summary>Type a path instead</summary>
-            <label class="sr-only" for="download-dir">Download folder</label>
-            <div class="path-row">
-              <input
-                id="download-dir"
-                type="text"
-                spellcheck="false"
-                autocomplete="off"
-                placeholder="/path/to/your/folder"
-              />
-              <button type="submit" id="save-settings" class="secondary">Save location</button>
+        <div class="preferences-panels">
+          <section class="panel" aria-labelledby="settings-h">
+            <div class="panel-head">
+              <h3 id="settings-h" class="section-title">Save folder</h3>
             </div>
-            <p class="hint">Useful if the folder chooser doesn’t open, for example when KitVid runs on another machine.</p>
-          </details>
-        </form>
-        <p id="settings-msg" class="hint" aria-live="polite">Pick a folder and it’s saved straight away.</p>
-      </section>
+            <p id="settings-path" class="path">Loading…</p>
+            <form id="settings-form" class="settings-form">
+              <div class="action-row">
+                <button type="button" id="browse-dir"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Choose folder</span></button>
+                <button type="button" id="reset-settings" class="secondary">Reset</button>
+              </div>
+              <details id="path-advanced" class="advanced">
+                <summary>Type a folder path</summary>
+                <label class="sr-only" for="download-dir">Download folder</label>
+                <div class="path-row">
+                  <input
+                    id="download-dir"
+                    type="text"
+                    spellcheck="false"
+                    autocomplete="off"
+                    placeholder="C:\Videos"
+                  />
+                  <button type="submit" id="save-settings" class="secondary">Save path</button>
+                </div>
+                <p class="hint">Enter the folder path on the computer running KitVid.</p>
+              </details>
+            </form>
+            <p id="settings-msg" class="hint" aria-live="polite">New downloads save here.</p>
+          </section>
 
-      <section class="panel" aria-labelledby="speed-h">
-        <div class="panel-head">
-          <h3 id="speed-h" class="section-title">Download speed</h3>
-          <span id="aria2-status" class="badge hidden"></span>
+          <section class="panel" aria-labelledby="speed-h">
+            <div class="panel-head">
+              <h3 id="speed-h" class="section-title">Download speed</h3>
+              <span id="aria2-status" class="badge hidden"></span>
+            </div>
+            <label class="switch" for="gentle-toggle">
+              <input id="gentle-toggle" type="checkbox" role="switch" />
+              <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+              <span class="switch-text">
+                <strong>Keep my internet usable</strong>
+                <span class="muted">Use less bandwidth while you browse or make calls.</span>
+              </span>
+            </label>
+            <p id="speed-msg" class="hint" aria-live="polite"></p>
+            <details class="advanced">
+              <summary>More speed options</summary>
+              <div class="speed-row">
+                <label for="speed-profile">Speed profile</label>
+                <select id="speed-profile"></select>
+              </div>
+            </details>
+          </section>
         </div>
-        <label class="switch" for="gentle-toggle">
-          <input id="gentle-toggle" type="checkbox" role="switch" />
-          <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-          <span class="switch-text">
-            <strong>Keep my internet usable</strong>
-            <span class="muted">Downloads use less bandwidth so calls and browsing stay smooth.</span>
-          </span>
-        </label>
-        <p id="speed-msg" class="hint" aria-live="polite"></p>
-        <details class="advanced">
-          <summary>Advanced</summary>
-          <div class="speed-row">
-            <label for="speed-profile">Speed profile</label>
-            <select id="speed-profile"></select>
-          </div>
-        </details>
       </section>
     </main>
 
     <footer class="page-footer">
-      <span>KitVid runs locally with yt-dlp and FFmpeg. Personal use only.</span>
-      <span class="credit">Made by <a href="https://lancekit.me" target="_blank" rel="noopener noreferrer">lancekit.me</a></span>
+      <div class="footer-brand">
+        <span class="brand-name">kitvid</span>
+        <span aria-hidden="true">✦</span>
+        <p>Create a brighter offline media library.</p>
+      </div>
+      <a href="https://lancekit.me" target="_blank" rel="noopener noreferrer">lancekit.me</a>
+      <span class="footer-note">Only download videos you have permission to save.</span>
     </footer>
 
-    <script src="/static/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/hero3d.js?v=2"></script>
+    <script src="/static/app.js?v=cancel-all-4"></script>
   </body>
 </html>

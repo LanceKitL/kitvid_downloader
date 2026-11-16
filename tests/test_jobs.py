@@ -128,5 +128,40 @@ class JobListingTests(unittest.TestCase):
         self.assertEqual([job.id for job in manager.list_jobs()], ["newer", "older"])
 
 
+class JobCancellationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_cancel_all_deletes_cancelled_jobs_and_keeps_finished_history(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            manager = JobManager()
+            queued = make_job("queued", temp_dir)
+            running = make_job("running", temp_dir)
+            running.status = "running"
+            finished = make_job("finished", temp_dir)
+            finished.status = "finished"
+            manager.jobs = {
+                job.id: job for job in (queued, running, finished)
+            }
+
+            cancelled = await manager.cancel_all()
+
+            self.assertEqual({job.id for job in cancelled}, {"queued", "running"})
+            self.assertEqual(queued.status, "cancelled")
+            self.assertEqual(running.status, "cancelled")
+            self.assertEqual(finished.status, "finished")
+            self.assertIsNone(manager.get("queued"))
+            self.assertIsNone(manager.get("running"))
+            self.assertIs(manager.get("finished"), finished)
+
+    def test_progress_does_not_restore_cancelled_job_to_running(self):
+        job = make_job()
+        job.status = "cancelled"
+
+        JobManager._handle_line(
+            job, "PROGRESS:downloading:1048576:4194304:NA:2048:12"
+        )
+
+        self.assertEqual(job.status, "cancelled")
+        self.assertEqual(job.stage, "Queued")
+
+
 if __name__ == "__main__":
     unittest.main()
