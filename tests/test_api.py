@@ -7,7 +7,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app import config, folder_picker, settings
-from app.jobs import manager
+from app.jobs import Job, manager
 from app.main import app
 
 
@@ -126,6 +126,43 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"jobs": [], "active": 0})
 
+    def test_cancelling_job_deletes_it(self):
+        job = Job(
+            id="cancel-me",
+            url="https://example.com/video",
+            format_id=None,
+            audio_only=False,
+            needs_audio=False,
+            output_dir=str(self.default),
+            status="running",
+        )
+        manager.jobs[job.id] = job
+
+        response = self.client.delete(f"/api/jobs/{job.id}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["deleted"])
+        self.assertIsNone(manager.get(job.id))
+
+    def test_cancel_all_deletes_cancelled_jobs(self):
+        job = Job(
+            id="cancel-all",
+            url="https://example.com/video",
+            format_id=None,
+            audio_only=False,
+            needs_audio=False,
+            output_dir=str(self.default),
+            status="queued",
+        )
+        manager.jobs[job.id] = job
+
+        response = self.client.post("/api/jobs/cancel-all")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["cancelled"], 1)
+        self.assertEqual(response.json()["jobs"][0]["status"], "cancelled")
+        self.assertIsNone(manager.get(job.id))
+
     def test_rejects_cross_origin_writes(self):
         response = self.client.put(
             "/api/settings",
@@ -139,7 +176,7 @@ class ApiTests(unittest.TestCase):
         response = self.client.get("/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("KitVid-Downloader", response.text)
+        self.assertIn("kitvid✦ — Download Without Limits", response.text)
 
 
 if __name__ == "__main__":

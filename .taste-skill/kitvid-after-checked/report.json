@@ -1,0 +1,1461 @@
+{
+ "url": "http://127.0.0.1:8000",
+ "at": "2026-11-16T14:51:20.331Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 2,
+   "filled": [
+    0.48,
+    0.54
+   ],
+   "motion": {
+    "elements": 2,
+    "css": 2,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 1050,
+     "screens": 1.2,
+     "words": 140,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 9,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Save videos for later",
+     "words": 4,
+     "chars": 21,
+     "lines": 1,
+     "size": 32,
+     "vw": 2.2,
+     "font": "Fredoka",
+     "weight": 700,
+     "tracking": -0.02,
+     "leading": 1.05,
+     "top": 163,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Save videos for later",
+     "words": 4,
+     "lines": 1,
+     "size": 32,
+     "font": "Fredoka"
+    },
+    "headings": [
+     {
+      "text": "Save videos for later",
+      "words": 4,
+      "chars": 21,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Fredoka",
+      "weight": 700,
+      "tracking": -0.025,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.39,
+      "top": 163,
+      "tag": "h1",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 1,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.88,
+       "mono": false
+      },
+      {
+       "family": "Fredoka",
+       "share": 0.12,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      20,
+      23,
+      26,
+      32
+     ],
+     "sizeCount": 11,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 13,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 7.8
+     },
+     "measureChars": 80,
+     "max": {
+      "size": 32,
+      "vw": 2.2,
+      "font": "Fredoka",
+      "text": "Save videos for later"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.14,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#d7efff",
+     "bodyBgHsl": {
+      "h": 204,
+      "s": 1,
+      "l": 0.92
+     },
+     "dark": false,
+     "sectionBgs": [],
+     "textColors": [
+      {
+       "color": "#43536b",
+       "share": 0.47
+      },
+      {
+       "color": "#111318",
+       "share": 0.39
+      },
+      {
+       "color": "#31455b",
+       "share": 0.08
+      },
+      {
+       "color": "#104caa",
+       "share": 0.04
+      },
+      {
+       "color": "#064da8",
+       "share": 0.01
+      }
+     ],
+     "button": {
+      "bg": "#ffffff",
+      "hsl": {
+       "h": 0,
+       "s": 0,
+       "l": 1
+      },
+      "fg": "#111318"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 5,
+     "inHero": 5,
+     "radius": 13,
+     "height": 42,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Paste",
+      "Add video",
+      "Choose folder",
+      "Reset"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 2,
+     "hairlineSamples": [
+      "details#path-advanced.advanced 345px",
+      "details.advanced 345px"
+     ],
+     "outlinedBoxes": 4,
+     "dashed": 1,
+     "blurred": 0,
+     "roundedBoxes": 6,
+     "boxRadius": 16,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 2,
+     "fixed": false,
+     "height": 66,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "fredoka",
+     "plus jakarta sans"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 1050,
+    "margins": {
+     "left": 192,
+     "right": 211
+    },
+    "sections": [
+     {
+      "sel": "section.hero-layout",
+      "tag": "section",
+      "top": 104,
+      "height": 390,
+      "words": 47,
+      "media": 0,
+      "middle": 72,
+      "heading": {
+       "text": "Save videos for later",
+       "size": 32,
+       "tag": "h1"
+      },
+      "left": 192,
+      "right": 318,
+      "textLeft": 192,
+      "textRight": 318,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#preferences.preferences",
+      "tag": "section",
+      "top": 639,
+      "height": 286,
+      "words": 63,
+      "media": 0,
+      "middle": 54,
+      "heading": {
+       "text": "Settings",
+       "size": 26,
+       "tag": "h2"
+      },
+      "left": 192,
+      "right": 212,
+      "textLeft": 192,
+      "textRight": 212,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Save videos for later",
+      "size": 32,
+      "top": 163,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 192,
+      "n": 3
+     },
+     {
+      "x": 485,
+      "n": 1
+     },
+     {
+      "x": 884,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 5,
+    "bodySize": 13,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0.14,
+    "voidBox": {
+     "x": 420,
+     "y": 480,
+     "w": 1020,
+     "h": 180
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": false,
+    "ground": "#d7efff",
+    "sidebar": null,
+    "topbar": {
+     "h": 66
+    },
+    "canvas": {
+     "left": 192,
+     "right": 192
+    },
+    "hero": {
+     "text": "Save videos for later",
+     "words": 4,
+     "chars": 21,
+     "lines": 1,
+     "size": 32,
+     "vw": 2.2,
+     "font": "Fredoka",
+     "weight": 700,
+     "tracking": -0.02,
+     "leading": 1.05,
+     "top": 163,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 5,
+     "firstScreen": 5,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 5,
+     "radii": [
+      [
+       16,
+       4
+      ],
+      [
+       34,
+       1
+      ]
+     ],
+     "heavyBorders": 1,
+     "borderSamples": [
+      "#a9c5d9 on #e8f6ff (1.63:1)"
+     ],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.01,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      20,
+      23,
+      26,
+      32
+     ]
+    },
+    "title": {
+     "text": "Save videos for later",
+     "size": 32,
+     "top": 163
+    },
+    "colourShare": 0.056
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 2,
+   "filled": [
+    0.67,
+    0.63
+   ],
+   "motion": {
+    "elements": 2,
+    "css": 2,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 1154,
+     "screens": 1.1,
+     "words": 140,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 9,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Save videos for later",
+     "words": 4,
+     "chars": 21,
+     "lines": 1,
+     "size": 32,
+     "vw": 4.2,
+     "font": "Fredoka",
+     "weight": 700,
+     "tracking": -0.02,
+     "leading": 1.05,
+     "top": 154,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Save videos for later",
+     "words": 4,
+     "lines": 1,
+     "size": 32,
+     "font": "Fredoka"
+    },
+    "headings": [
+     {
+      "text": "Save videos for later",
+      "words": 4,
+      "chars": 21,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Fredoka",
+      "weight": 700,
+      "tracking": -0.025,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.51,
+      "top": 154,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Settings",
+      "words": 1,
+      "chars": 8,
+      "lines": 1,
+      "size": 26,
+      "vw": 3.4,
+      "font": "Fredoka",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 661,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 2,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.88,
+       "mono": false
+      },
+      {
+       "family": "Fredoka",
+       "share": 0.12,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      20,
+      23,
+      26,
+      32
+     ],
+     "sizeCount": 11,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 13,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 7.8
+     },
+     "measureChars": 53,
+     "max": {
+      "size": 32,
+      "vw": 4.2,
+      "font": "Fredoka",
+      "text": "Save videos for later"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.14,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#d7efff",
+     "bodyBgHsl": {
+      "h": 204,
+      "s": 1,
+      "l": 0.92
+     },
+     "dark": false,
+     "sectionBgs": [],
+     "textColors": [
+      {
+       "color": "#43536b",
+       "share": 0.47
+      },
+      {
+       "color": "#111318",
+       "share": 0.39
+      },
+      {
+       "color": "#31455b",
+       "share": 0.08
+      },
+      {
+       "color": "#104caa",
+       "share": 0.04
+      },
+      {
+       "color": "#064da8",
+       "share": 0.01
+      }
+     ],
+     "button": {
+      "bg": "#ffffff",
+      "hsl": {
+       "h": 0,
+       "s": 0,
+       "l": 1
+      },
+      "fg": "#111318"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 5,
+     "inHero": 5,
+     "radius": 13,
+     "height": 42,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Paste",
+      "Add video",
+      "Choose folder",
+      "Reset"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 2,
+     "hairlineSamples": [
+      "details#path-advanced.advanced 316px",
+      "details.advanced 316px"
+     ],
+     "outlinedBoxes": 4,
+     "dashed": 1,
+     "blurred": 0,
+     "roundedBoxes": 6,
+     "boxRadius": 16,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 2,
+     "fixed": false,
+     "height": 66,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "fredoka",
+     "plus jakarta sans"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 1154,
+    "margins": {
+     "left": 22,
+     "right": 41
+    },
+    "sections": [
+     {
+      "sel": "section.hero-layout",
+      "tag": "section",
+      "top": 104,
+      "height": 390,
+      "words": 47,
+      "media": 0,
+      "middle": 57,
+      "heading": {
+       "text": "Save videos for later",
+       "size": 32,
+       "tag": "h1"
+      },
+      "left": 22,
+      "right": 74,
+      "textLeft": 22,
+      "textRight": 74,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#preferences.preferences",
+      "tag": "section",
+      "top": 639,
+      "height": 390,
+      "words": 63,
+      "media": 0,
+      "middle": 21,
+      "heading": {
+       "text": "Settings",
+       "size": 26,
+       "tag": "h2"
+      },
+      "left": 22,
+      "right": 47,
+      "textLeft": 22,
+      "textRight": 47,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Save videos for later",
+      "size": 32,
+      "top": 154,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 22,
+      "n": 3
+     },
+     {
+      "x": 41,
+      "n": 1
+     },
+     {
+      "x": 411,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 5,
+    "bodySize": 13,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "dark": false,
+    "ground": "#d7efff",
+    "sidebar": null,
+    "topbar": {
+     "h": 66
+    },
+    "canvas": {
+     "left": 22,
+     "right": 22
+    },
+    "hero": {
+     "text": "Save videos for later",
+     "words": 4,
+     "chars": 21,
+     "lines": 1,
+     "size": 32,
+     "vw": 4.2,
+     "font": "Fredoka",
+     "weight": 700,
+     "tracking": -0.02,
+     "leading": 1.05,
+     "top": 154,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 5,
+     "firstScreen": 5,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 5,
+     "radii": [
+      [
+       16,
+       4
+      ],
+      [
+       34,
+       1
+      ]
+     ],
+     "heavyBorders": 1,
+     "borderSamples": [
+      "#a9c5d9 on #e8f6ff (1.63:1)"
+     ],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.01,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      17,
+      18,
+      20,
+      23,
+      26,
+      32
+     ]
+    },
+    "title": {
+     "text": "Save videos for later",
+     "size": 32,
+     "top": 154
+    },
+    "colourShare": 0.076
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 2,
+   "filled": [
+    0.86,
+    0.77
+   ],
+   "motion": {
+    "elements": 2,
+    "css": 2,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 1632,
+     "screens": 1.9,
+     "words": 127,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 9,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Save videos for later",
+     "words": 4,
+     "chars": 21,
+     "lines": 1,
+     "size": 26,
+     "vw": 6.7,
+     "font": "Fredoka",
+     "weight": 700,
+     "tracking": -0.02,
+     "leading": 1.05,
+     "top": 84,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Save videos for later",
+     "words": 4,
+     "lines": 1,
+     "size": 26,
+     "font": "Fredoka"
+    },
+    "headings": [
+     {
+      "text": "KitVid",
+      "words": 1,
+      "chars": 6,
+      "lines": 1,
+      "size": 23,
+      "vw": 5.9,
+      "font": "Fredoka",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.28,
+      "top": 10,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Save videos for later",
+      "words": 4,
+      "chars": 21,
+      "lines": 1,
+      "size": 26,
+      "vw": 6.7,
+      "font": "Fredoka",
+      "weight": 700,
+      "tracking": -0.025,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 84,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Settings",
+      "words": 1,
+      "chars": 8,
+      "lines": 1,
+      "size": 26,
+      "vw": 6.7,
+      "font": "Fredoka",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 875,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 3,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.91,
+       "mono": false
+      },
+      {
+       "family": "Fredoka",
+       "share": 0.09,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      18,
+      20,
+      23,
+      26
+     ],
+     "sizeCount": 9,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 13,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 7.8
+     },
+     "measureChars": 50,
+     "max": {
+      "size": 26,
+      "vw": 6.7,
+      "font": "Fredoka",
+      "text": "Save videos for later"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.15,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#d7efff",
+     "bodyBgHsl": {
+      "h": 204,
+      "s": 1,
+      "l": 0.92
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#eaf6ff",
+       "top": 418,
+       "hsl": {
+        "h": 206,
+        "s": 1,
+        "l": 0.96
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 976,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#43536b",
+       "share": 0.47
+      },
+      {
+       "color": "#111318",
+       "share": 0.38
+      },
+      {
+       "color": "#31455b",
+       "share": 0.08
+      },
+      {
+       "color": "#104caa",
+       "share": 0.04
+      },
+      {
+       "color": "#064da8",
+       "share": 0.01
+      }
+     ],
+     "button": {
+      "bg": "#ffffff",
+      "hsl": {
+       "h": 0,
+       "s": 0,
+       "l": 1
+      },
+      "fg": "#111318"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 5,
+     "inHero": 2,
+     "radius": 13,
+     "height": 42,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Paste",
+      "Add video"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 2,
+     "hairlineSamples": [
+      "details#path-advanced.advanced 320px",
+      "details.advanced 320px"
+     ],
+     "outlinedBoxes": 4,
+     "dashed": 1,
+     "blurred": 0,
+     "roundedBoxes": 6,
+     "boxRadius": 18,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 2,
+     "fixed": false,
+     "height": 60,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "fredoka",
+     "plus jakarta sans"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 1632,
+    "margins": {
+     "left": 16,
+     "right": 23
+    },
+    "sections": [
+     {
+      "sel": "section.hero-layout",
+      "tag": "section",
+      "top": 84,
+      "height": 632,
+      "words": 40,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Save videos for later",
+       "size": 26,
+       "tag": "h1"
+      },
+      "left": 16,
+      "right": 29,
+      "textLeft": 16,
+      "textRight": 29,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#preferences.preferences",
+      "tag": "section",
+      "top": 853,
+      "height": 651,
+      "words": 71,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Settings",
+       "size": 26,
+       "tag": "h2"
+      },
+      "left": 16,
+      "right": 35,
+      "textLeft": 16,
+      "textRight": 36,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Save videos for later",
+      "size": 26,
+      "top": 84,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 16,
+      "n": 3
+     },
+     {
+      "x": 35,
+      "n": 2
+     }
+    ],
+    "leftBlocks": 5,
+    "bodySize": 13,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": false,
+    "ground": "#d7efff",
+    "sidebar": null,
+    "topbar": {
+     "h": 60
+    },
+    "canvas": {
+     "left": 16,
+     "right": 16
+    },
+    "hero": {
+     "text": "Save videos for later",
+     "words": 4,
+     "chars": 21,
+     "lines": 1,
+     "size": 26,
+     "vw": 6.7,
+     "font": "Fredoka",
+     "weight": 700,
+     "tracking": -0.02,
+     "leading": 1.05,
+     "top": 84,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 5,
+     "firstScreen": 3,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 5,
+     "radii": [
+      [
+       18,
+       3
+      ],
+      [
+       34,
+       1
+      ],
+      [
+       16,
+       1
+      ]
+     ],
+     "heavyBorders": 1,
+     "borderSamples": [
+      "#a9c5d9 on #e8f6ff (1.63:1)"
+     ],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.01,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      18,
+      20,
+      23,
+      26
+     ]
+    },
+    "title": {
+     "text": "Save videos for later",
+     "size": 26,
+     "top": 84
+    },
+    "colourShare": 0.149
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "colour-sprawl",
+   "width": 390,
+   "message": "15% of the first screen is strongly coloured.",
+   "fix": "Keep the screen neutral and spend colour on data and status: the studied screens sit near 3%, and only tinted styles reach 10–15%, as pale tints rather than saturated fills."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "C:\\Users\\lance\\kitvid_downloader\\.taste-skill\\kitvid-after-checked\\desktop-fold.jpg",
+   "pages": [
+    "C:\\Users\\lance\\kitvid_downloader\\.taste-skill\\kitvid-after-checked\\desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "C:\\Users\\lance\\kitvid_downloader\\.taste-skill\\kitvid-after-checked\\tablet-fold.jpg",
+   "pages": [
+    "C:\\Users\\lance\\kitvid_downloader\\.taste-skill\\kitvid-after-checked\\tablet-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "C:\\Users\\lance\\kitvid_downloader\\.taste-skill\\kitvid-after-checked\\mobile-fold.jpg",
+   "pages": [
+    "C:\\Users\\lance\\kitvid_downloader\\.taste-skill\\kitvid-after-checked\\mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}
